@@ -6,42 +6,59 @@ const http = require("http");
 const { initWebSocket } = require("./websocket");
 const { initUdpReceivers } = require("./udp_handlers");
 const { startGnssSdr, stopGnssSdr, getStatus } = require("./gnss_control");
-const { getLatestPvt, getLatestObservables, getLatestObservablesMeta } = require("./state");
+const {
+  getLatestPvt,
+  getLatestObservables,
+  getLatestObservablesMeta
+} = require("./state");
 
 const HTTP_PORT = 8080;
 
 const app = express();
 const server = http.createServer(app);
 
-// Static files
-app.use(express.static(path.join(__dirname, "..", "public")));
+// -----------------------------------------------------------------------------
+// Middleware
+// -----------------------------------------------------------------------------
 app.use(express.json());
 
+// Static frontend files
+const PUBLIC_DIR = path.join(__dirname, "..", "public");
+app.use(express.static(PUBLIC_DIR));
+
+// CORS (as in your original file)
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   next();
-
 });
 
-// Latest PVT (single object)
+// -----------------------------------------------------------------------------
+// API: latest data
+// -----------------------------------------------------------------------------
+
+// Latest PVT
 app.get("/api/latest/pvt", (req, res) => {
   const pvt = getLatestPvt();
   res.json({
     ok: true,
-    pvt: pvt   // null when not available
+    pvt // null when not available
   });
 });
 
-// Latest observables snapshot (array)
+// Latest observables snapshot
 app.get("/api/latest/observables", (req, res) => {
   const limit = Number(req.query.limit ?? 64);
-  const obs = getLatestObservables({ limit: Number.isFinite(limit) ? limit : 64 });
+  const obs = getLatestObservables({
+    limit: Number.isFinite(limit) ? limit : 64
+  });
   const meta = getLatestObservablesMeta();
   res.json({ ok: true, meta, observables: obs });
 });
 
+// -----------------------------------------------------------------------------
+// API: GNSS-SDR control
+// -----------------------------------------------------------------------------
 
-// GNSS API
 app.post("/api/gnss/start", (req, res) => {
   const result = startGnssSdr("conf1");
   res.status(result.ok ? 200 : 500).json(result);
@@ -67,11 +84,23 @@ app.get("/api/gnss/status", (req, res) => {
   res.status(200).json(result);
 });
 
-// Initialize WebSocket + UDP
+// -----------------------------------------------------------------------------
+// Frontend routes (SPA server-side routing)
+// IMPORTANT: must be AFTER API routes
+// -----------------------------------------------------------------------------
+app.get(["/", "/summary", "/historics", "/observables"], (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, "index.html"));
+});
+
+// -----------------------------------------------------------------------------
+// WebSocket + UDP receivers
+// -----------------------------------------------------------------------------
 initWebSocket(server);
 initUdpReceivers();
 
+// -----------------------------------------------------------------------------
 // Start server
+// -----------------------------------------------------------------------------
 server.listen(HTTP_PORT, () => {
   console.log(`🌐 Web server running at http://localhost:${HTTP_PORT}`);
   console.log("Waiting for UDP data from GNSS-SDR...");
