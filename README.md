@@ -100,7 +100,7 @@ A dedicated **Python script** extracts relevant GNSS-SDR outputs and forwards th
 
 The microcontroller drives an **LED matrix display**, providing real-time visualization of receiver status and navigation parameters.
 
-Currently visualized information includes (**exact mapping TBC**):
+Currently visualized information includes:
 
 - Satellite signal strength indicators (C/N₀)  
 - Receiver activity and status  
