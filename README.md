@@ -121,6 +121,7 @@ The LED matrix provides a compact, color-coded visualization of key PVT paramete
 
 ![LED matrix PVT](images/led_matrix_pvt.jpg)
 
+A working video can be found in: https://youtu.be/a7ZrCYMQSxc
 ---
 
 ## Status and limitations
