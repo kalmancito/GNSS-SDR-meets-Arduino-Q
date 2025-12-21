@@ -574,7 +574,7 @@ function updateChannel(sample) {
   tr.querySelector('.sig').textContent = sample.signal || '';
 
   const cn0Cell = tr.querySelector('.cn0');
-  if (typeof sample.cn0_db_hz === 'number') {
+  if (typeof sample.cn0_db_hz === 'number' && sample.cn0_db_hz > 0) {
     cn0Cell.textContent = sample.cn0_db_hz.toFixed(1);
     cn0Cell.className   = 'num cn0 ' + cn0Class(sample.cn0_db_hz);
   } else {
@@ -593,7 +593,7 @@ function updateChannel(sample) {
 }
 
 function updateMultiSeriesPlot(plotObj, chart, key, t, y, labelPrefix, chId) {
-  if (typeof y !== 'number' || isNaN(y)) return;
+  if (typeof y !== 'number' || isNaN(y) || y <= 0) return;
 
   let dataset = plotObj.datasets.get(key);
   if (!dataset) {
