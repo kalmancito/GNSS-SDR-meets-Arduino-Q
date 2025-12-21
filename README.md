@@ -158,7 +158,7 @@ Planned extensions include:
 
 ## License
 
-This work is released under the **GNU General Public License v3.0 (GPL-3.0)**.
+This work is released under the **GNU General Public License v2.0 (GPL-2.0)**.
 
 The GPL license ensures practical usability, inspection, and continuous improvement by the research community, allowing discussion based on tangible code and the analysis of results obtained with real signals.
 
