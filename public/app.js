@@ -39,6 +39,7 @@ const histAltCanvas   = document.getElementById('hist-alt-canvas');
 const histVelECanvas  = document.getElementById('hist-vel-e-canvas');
 const histVelNCanvas  = document.getElementById('hist-vel-n-canvas');
 const histVelUCanvas  = document.getElementById('hist-vel-u-canvas');
+const statsResetBtn   = document.getElementById('stats-reset-btn');
 
 let decimationFactor = 1;
 let decimCounter = 0;
@@ -745,7 +746,7 @@ function updateChannel(sample) {
   const tt = new Date(sample.timestamp || Date.now());
   tr.querySelector('.time').textContent = tt.toLocaleTimeString();
 
-  updateMultiSeriesPlot(plotData.cn0, cn0Chart, prnKey, t, sample.cn0_db_hz, 'C/N?'?', id, { minPositive: true });
+  updateMultiSeriesPlot(plotData.cn0, cn0Chart, prnKey, t, sample.cn0_db_hz, 'C/N0', id, { minPositive: true });
   updateMultiSeriesPlot(plotData.dop, dopChart, prnKey, t, sample.doppler_hz, 'Doppler', id);
 }
 
@@ -895,6 +896,22 @@ function updateStats(force) {
   applyHistogram(histVelUChart, velUStats);
 }
 
+function resetStatsData() {
+  plotData.pos.datasets.clear();
+  plotData.vel.datasets.clear();
+
+  if (posChart) {
+    posChart.data.datasets = [];
+    posChart.update('none');
+  }
+  if (velChart) {
+    velChart.data.datasets = [];
+    velChart.update('none');
+  }
+
+  updateStats(true);
+}
+
 function handleMessage(msg) {
   if (Array.isArray(msg)) {
     msg.forEach(handleMessage);
@@ -965,5 +982,11 @@ fetchGnssStatus();
 if (decimationSelect) {
   decimationSelect.addEventListener('change', () => {
     decimationFactor = parseInt(decimationSelect.value, 10) || 1;
+  });
+}
+
+if (statsResetBtn) {
+  statsResetBtn.addEventListener('click', () => {
+    resetStatsData();
   });
 }

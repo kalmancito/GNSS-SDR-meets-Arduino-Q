@@ -479,6 +479,19 @@ canvas {
 .hist-card canvas {
   max-height: 160px;
 }
+.stats-reset {
+  margin-top: 0.6rem;
+  border-radius: 999px;
+  border: 1px solid #334155;
+  background: #0b1224;
+  color: #e5e7eb;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.stats-reset:hover {
+  border-color: #1e40af;
+}
 @media (max-width: 1000px) {
   .stats-grid {
     grid-template-columns: repeat(2, minmax(140px, 1fr));
