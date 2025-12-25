@@ -129,7 +129,7 @@ The LED matrix provides a compact, color-coded visualization of key PVT paramete
 - **Yellow:** C/N₀ bar indicators for up to seven satellites.
 - **Green:** Position and velocity representation. Within this square, a dot moves in the corresponding direction of motion; its displacement increases or decreases proportionally with the platform’s speed.
 
-<img src="images/led_matrix_pvt.jpg" alt="LED matrix PVT" style="transform: rotate(90deg); width: 300px;">
+<img src="images/led_matrix_pvt.jpg" alt="LED matrix PVT" style="transform: rotate(-90deg); width: 300px;">
 
 A working video can be found in: https://youtu.be/a7ZrCYMQSxc
 ---
