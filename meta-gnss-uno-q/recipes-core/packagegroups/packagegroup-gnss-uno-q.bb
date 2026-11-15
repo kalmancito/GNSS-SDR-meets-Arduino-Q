@@ -24,7 +24,7 @@ SUMMARY:${PN}-receiver = "GNSS-SDR, its profiles and the RTL-SDR tools"
 RDEPENDS:${PN}-receiver = " \
     gnss-sdr \
     gnss-config \
-    rtl-sdr \
+    rtl-sdr-bin \
 "
 
 SUMMARY:${PN}-monitor = "Web monitor and control panel"

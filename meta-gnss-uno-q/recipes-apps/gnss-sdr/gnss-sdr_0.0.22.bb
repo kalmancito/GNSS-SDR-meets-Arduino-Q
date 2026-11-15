@@ -136,6 +136,7 @@ INSANE_SKIP:${PN}-dbg += "buildpaths"
 
 CONFFILES:${PN} = "${sysconfdir}/default/gnss-sdr"
 
-# rtl-sdr provides rtl_tcp (live profile) and rtl_test; bash runs the preflight.
-RDEPENDS:${PN} += "bash rtl-sdr"
+# rtl_tcp (live profile) and rtl_test are in rtl-sdr's -bin package
+# (meta-sdr's recipe uses lib_package); bash runs the preflight.
+RDEPENDS:${PN} += "bash rtl-sdr-bin"
 RRECOMMENDS:${PN} += "gnss-config"

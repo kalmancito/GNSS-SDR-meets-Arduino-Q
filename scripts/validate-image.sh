@@ -43,8 +43,8 @@ if [ -z "$manifest" ]; then
     fail "no package manifest for $image in $deploy"
 else
     echo "    manifest: $(basename "$manifest")"
-    for pkg in gnss-sdr gnss-config rtl-sdr gnss-web-monitor nodejs gnss-led-bridge arduino-router \
-        python3-arduino-router-bridge gnss-mcu-flash qbootctl networkmanager openssh-sshd gnss-resize-rootfs; do
+    for pkg in gnss-sdr gnss-config rtl-sdr-bin gnss-web-monitor nodejs gnss-led-bridge arduino-router \
+        python3-arduino-router-bridge gnss-mcu-flash gnss-tools qbootctl networkmanager openssh-sshd gnss-resize-rootfs; do
         if grep -qE "^$pkg " "$manifest"; then
             pass "$pkg $(grep -E "^$pkg " "$manifest" | awk '{print $3}')"
         else
@@ -126,7 +126,9 @@ fi
 
 # ---- 4. device tree: UART to the STM32 ----------------------------------------------
 info "Device tree"
-dtb="$(newest "$deploy"/*qrb2210-arduino-imola*.dtb)"
+# Deployed at the top level or under a vendor subdirectory (qcom/), depending
+# on the kernel class settings.
+dtb="$(find "$deploy" -maxdepth 2 -name '*qrb2210-arduino-imola*.dtb' -printf '%T@ %p\n' 2> /dev/null | sort -rn | head -n 1 | cut -d' ' -f2-)"
 if [ -z "$dtb" ]; then
     skip "qrb2210-arduino-imola.dtb not found in $deploy"
 elif ! command -v dtc > /dev/null 2>&1; then
