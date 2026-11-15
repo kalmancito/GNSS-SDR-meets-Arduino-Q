@@ -1,0 +1,6 @@
+# Runtime directory shared by gnss-sdr.service (args.env) and the web monitor
+# (selected.env): both run in group "gnss". Setgid so new files keep the group.
+d /run/gnss-sdr 2775 gnss gnss -
+# Where recorded I/Q captures are expected (not part of the image).
+d /var/lib/gnss-sdr 0755 gnss gnss -
+d /var/lib/gnss-sdr/captures 0775 gnss gnss -

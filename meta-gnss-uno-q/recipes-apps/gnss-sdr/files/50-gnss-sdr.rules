@@ -1,0 +1,12 @@
+// Members of the "gnss" group (the web monitor) may start, stop and restart
+// gnss-sdr.service - and nothing else - without authentication.
+polkit.addRule(function (action, subject) {
+    if (action.id == "org.freedesktop.systemd1.manage-units" &&
+        action.lookup("unit") == "gnss-sdr.service" &&
+        subject.isInGroup("gnss")) {
+        var verb = action.lookup("verb");
+        if (verb == "start" || verb == "stop" || verb == "restart" || verb == "reset-failed") {
+            return polkit.Result.YES;
+        }
+    }
+});

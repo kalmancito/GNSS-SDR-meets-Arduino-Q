@@ -1,0 +1,86 @@
+#!/bin/bash
+# Pre-start check for gnss-sdr.service.
+#
+# Verifies that the selected profile can actually run and writes the extra
+# command-line arguments to /run/gnss-sdr/args.env. When a prerequisite is
+# missing it explains what and exits 78, which the unit treats as "do not
+# retry": a receiver with no antenna dongle plugged in must not restart forever.
+#
+# Environment (from /etc/default/gnss-sdr and /run/gnss-sdr/selected.env):
+#   GNSS_SDR_CONFIG        profile name: /etc/gnss-sdr/<name>.conf
+#   GNSS_SDR_SIGNAL_FILE   capture to replay (file profiles); empty = as in the .conf
+#   GNSS_SDR_EXTRA_ARGS    extra gnss-sdr arguments
+#   RTL_TCP_ADDRESS/PORT   where rtl_tcp listens (live profiles)
+#   RTL_TCP_WAIT_S         how long to wait for rtl_tcp
+
+set -u
+
+EX_CONFIG=78
+CONF_DIR="${GNSS_SDR_CONF_DIR:-/etc/gnss-sdr}"
+RUN_DIR="${GNSS_SDR_RUN_DIR:-/run/gnss-sdr}"
+
+fail() {
+    echo "gnss-sdr preflight: $*" >&2
+    exit "$EX_CONFIG"
+}
+
+# Value of "Key=value" in the profile, without trailing comment or blanks.
+conf_get() {
+    sed -n "s/^[[:space:]]*$1[[:space:]]*=[[:space:]]*\\([^;]*\\).*\$/\\1/p" "$conf" | tail -n 1 | sed 's/[[:space:]]*$//'
+}
+
+name="${GNSS_SDR_CONFIG:-}"
+[ -n "$name" ] || fail "GNSS_SDR_CONFIG is not set (see /etc/default/gnss-sdr)."
+case "$name" in
+    */* | .* | *[!A-Za-z0-9._-]*) fail "invalid profile name '$name'." ;;
+esac
+
+conf="$CONF_DIR/$name.conf"
+[ -r "$conf" ] || fail "profile '$name' not found: $conf does not exist or is not readable. Available: $(cd "$CONF_DIR" 2>/dev/null && ls ./*.conf 2>/dev/null | sed 's#^\./##; s#\.conf$##' | tr '\n' ' ')"
+
+args="${GNSS_SDR_EXTRA_ARGS:-}"
+source_impl="$(conf_get 'SignalSource\.implementation')"
+[ -n "$source_impl" ] || fail "$conf does not set SignalSource.implementation."
+
+case "$source_impl" in
+    *File_Signal_Source)
+        file="${GNSS_SDR_SIGNAL_FILE:-}"
+        if [ -n "$file" ]; then
+            args="--signal_source=$file $args"
+        else
+            file="$(conf_get 'SignalSource\.filename')"
+        fi
+        [ -n "$file" ] || fail "no capture file: set GNSS_SDR_SIGNAL_FILE in /etc/default/gnss-sdr."
+        [ -r "$file" ] || fail "capture file '$file' does not exist or is not readable by user $(id -un). See tests/fixtures/README.md for how to obtain a test capture."
+        ;;
+    RtlTcp_Signal_Source)
+        host="${RTL_TCP_ADDRESS:-$(conf_get 'SignalSource\.address')}"
+        port="${RTL_TCP_PORT:-$(conf_get 'SignalSource\.port')}"
+        host="${host:-127.0.0.1}"
+        port="${port:-1234}"
+        wait_s="${RTL_TCP_WAIT_S:-15}"
+        ok=0
+        for _ in $(seq 1 "$wait_s"); do
+            # rtl_tcp serves a single client and restarts its stream on connect:
+            # probe the port without consuming data.
+            if (exec 3<>"/dev/tcp/$host/$port") 2>/dev/null; then
+                ok=1
+                break
+            fi
+            sleep 1
+        done
+        [ "$ok" -eq 1 ] || fail "rtl_tcp is not answering on $host:$port after ${wait_s}s. Is the RTL-SDR plugged in (lsusb) and the USB-C port in host mode? Check 'systemctl status rtl-tcp'."
+        # Give rtl_tcp time to notice the probe disconnecting and accept again.
+        sleep 1
+        ;;
+    *)
+        echo "gnss-sdr preflight: no specific check for $source_impl, starting anyway." >&2
+        ;;
+esac
+
+mkdir -p "$RUN_DIR" 2>/dev/null
+if ! printf 'GNSS_SDR_ARGS=%s\n' "$args" > "$RUN_DIR/args.env" 2>/dev/null; then
+    fail "cannot write $RUN_DIR/args.env."
+fi
+echo "gnss-sdr preflight: profile '$name' ($source_impl) is ready."
+exit 0

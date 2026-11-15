@@ -1,0 +1,24 @@
+[Unit]
+Description=rtl_tcp I/Q server for the RTL-SDR front-end
+Documentation=https://osmocom.org/projects/rtl-sdr/wiki
+# Started by udev when an RTL-SDR is plugged in (99-gnss-rtl-sdr.rules) and
+# stopped when it is removed.
+StopWhenUnneeded=yes
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=gnss
+Group=gnss
+SupplementaryGroups=plugdev
+EnvironmentFile=-/etc/default/gnss-sdr
+# Loopback only: the raw I/Q stream is not exposed on the network.
+ExecStart=/usr/bin/rtl_tcp -a ${RTL_TCP_ADDRESS} -p ${RTL_TCP_PORT} $RTL_TCP_EXTRA_ARGS
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes

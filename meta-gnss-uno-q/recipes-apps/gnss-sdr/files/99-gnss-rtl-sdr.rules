@@ -1,0 +1,5 @@
+# RTL2832U-based SDR dongles (RTL-SDR Blog, Nooelec NESDR, generic).
+# Give the "plugdev" group access to the raw USB device and start rtl_tcp while
+# the dongle is present. Vendor/product ids as in rtl-sdr's own rtl-sdr.rules.
+ACTION=="add|bind", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="0bda", ATTR{idProduct}=="2832|2838", \
+    MODE="0660", GROUP="plugdev", TAG+="systemd", ENV{SYSTEMD_WANTS}+="rtl-tcp.service"

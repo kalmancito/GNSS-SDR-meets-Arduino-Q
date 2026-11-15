@@ -1,0 +1,51 @@
+[Unit]
+Description=GNSS-SDR software-defined GNSS receiver
+Documentation=https://gnss-sdr.org/docs/
+After=network.target systemd-tmpfiles-setup.service
+# At most 3 start attempts in 5 minutes, then systemd gives up and the unit is
+# left "failed" with the reason in the journal (no endless restart loop).
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=gnss
+Group=gnss
+SupplementaryGroups=plugdev
+
+# Defaults, then the profile chosen at run time (e.g. from the web monitor).
+EnvironmentFile=-/etc/default/gnss-sdr
+EnvironmentFile=-/run/gnss-sdr/selected.env
+
+# Checks the profile's prerequisites and writes /run/gnss-sdr/args.env.
+# Exit status 78 = "nothing to do here until someone fixes the setup"
+# (missing capture file, no SDR plugged in): reported once, never retried.
+ExecStartPre=/usr/libexec/gnss-sdr-preflight
+EnvironmentFile=-/run/gnss-sdr/args.env
+ExecStart=/usr/bin/gnss-sdr --config_file=/etc/gnss-sdr/${GNSS_SDR_CONFIG}.conf --log_dir=/var/log/gnss-sdr $GNSS_SDR_ARGS
+
+# gnss-sdr handles SIGTERM: it stops the flowgraph and closes its output files.
+KillSignal=SIGTERM
+TimeoutStopSec=20
+Restart=on-failure
+RestartSec=10
+RestartPreventExitStatus=78
+
+# Receiver outputs (RINEX, NMEA, KML...) go to the working directory.
+StateDirectory=gnss-sdr
+LogsDirectory=gnss-sdr
+WorkingDirectory=/var/lib/gnss-sdr
+# HOME is where VOLK keeps the kernel selection made by volk_gnsssdr_profile.
+Environment=HOME=/var/lib/gnss-sdr
+
+# The board has 2 GB of RAM: fail the receiver rather than the whole system.
+MemoryMax=1200M
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/run/gnss-sdr
+
+[Install]
+WantedBy=multi-user.target

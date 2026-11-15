@@ -1,0 +1,25 @@
+# Settings for gnss-sdr.service and rtl-tcp.service.
+# After editing:  systemctl restart rtl-tcp gnss-sdr
+
+# Receiver profile: name of a file in /etc/gnss-sdr/ without ".conf".
+# The web monitor can override it until the next reboot.
+GNSS_SDR_CONFIG=gps-l1ca-live
+
+# Capture replayed by the file profiles. Empty = the file named in the profile.
+GNSS_SDR_SIGNAL_FILE=/var/lib/gnss-sdr/captures/2013_04_04_GNSS_SIGNAL_at_CTTC_SPAIN.dat
+
+# Extra arguments for gnss-sdr (see gnss-sdr --help).
+GNSS_SDR_EXTRA_ARGS=
+
+# ---- RTL-SDR served by rtl_tcp (live profiles) -----------------------------
+RTL_TCP_ADDRESS=127.0.0.1
+RTL_TCP_PORT=1234
+# Seconds gnss-sdr.service waits for rtl_tcp before giving up.
+RTL_TCP_WAIT_S=15
+# Extra arguments for rtl_tcp, for example:
+#   -d 0     device index
+#   -T       enable the bias tee (dongles where it is software controlled)
+#   -P 0     frequency correction in ppm
+# Frequency, sample rate and gain are set by GNSS-SDR through the rtl_tcp
+# protocol from the profile; do not set them here.
+RTL_TCP_EXTRA_ARGS=
