@@ -19,7 +19,17 @@ repo="$(cd "$here/.." && pwd)"
 layer="$repo/meta-gnss-uno-q"
 cd "$repo"
 
-python_bin="$(command -v python3 || command -v python || true)"
+# Prefer an interpreter that has PyYAML (needed to parse the kas files).
+python_bin=""
+for candidate in python3 python; do
+    if command -v "$candidate" > /dev/null 2>&1; then
+        [ -n "$python_bin" ] || python_bin="$candidate"
+        if "$candidate" -c 'import yaml' > /dev/null 2>&1; then
+            python_bin="$candidate"
+            break
+        fi
+    fi
+done
 [ -n "$python_bin" ] || { echo "error: python3 not found" >&2; exit 2; }
 
 fails=0
@@ -97,14 +107,19 @@ done < <(find "$layer" -name '*.bb')
 # ---- files referenced by recipes exist -----------------------------------------------------------------
 bad=0
 while IFS= read -r f; do
-    dir="$(dirname "$f")"
-    for name in $(grep -oE 'file://[A-Za-z0-9._/%+-]+' "$f" | sed 's#file://##' | grep -vE '^\$|^(COPYING|LICENSE|src/)' | sort -u); do
-        case "$name" in
-            web-monitor) [ -d "$repo/apps/web-monitor" ] || { fail "$(basename "$f"): apps/web-monitor missing"; bad=1; } ;;
-            python/*) [ -f "$repo/apps/led-matrix/$name" ] || { fail "$(basename "$f"): apps/led-matrix/$name missing"; bad=1; } ;;
-            LICENSE.txt | package.json) ;;
-            *) [ -e "$dir/files/$name" ] || { fail "$(basename "$f"): files/$name missing"; bad=1; } ;;
-        esac
+    # Search path: the recipe's files/ directory plus any directory of this
+    # repository the recipe adds with FILESEXTRAPATHS (${GNSS_UNO_Q_REPO}/...).
+    search=("$(dirname "$f")/files")
+    while IFS= read -r sub; do
+        search+=("$repo/$sub")
+    done < <(grep -E '^FILESEXTRAPATHS' "$f" | grep -oE '\$\{GNSS_UNO_Q_REPO\}/[A-Za-z0-9._/-]+' | sed 's#^\${GNSS_UNO_Q_REPO}/##')
+    # Only SRC_URI entries; LIC_FILES_CHKSUM names files inside the fetched source.
+    for name in $(grep -vE '^[[:space:]]*(#|LIC_FILES_CHKSUM)' "$f" | grep -oE 'file://[A-Za-z0-9._/%+-]+' | sed 's#file://##' | sort -u); do
+        found=0
+        for d in "${search[@]}"; do
+            [ -e "$d/$name" ] && found=1 && break
+        done
+        [ "$found" -eq 1 ] || { fail "$(basename "$f"): SRC_URI file '$name' not found in: ${search[*]#"$repo"/}"; bad=1; }
     done
 done < <(find "$layer" -name '*.bb')
 [ "$bad" -eq 0 ] && pass "every file:// entry of SRC_URI exists"
@@ -112,7 +127,8 @@ done < <(find "$layer" -name '*.bb')
 # ---- shell files are LF and executable-ready ---------------------------------------------------------------
 bad=0
 while IFS= read -r f; do
-    if grep -q $'\r' "$f"; then fail "CRLF line endings in ${f#"$repo"/}"; bad=1; fi
+    # Counted with tr: grep strips carriage returns on some Windows builds.
+    if [ "$(tr -cd '\r' < "$f" | wc -c)" -gt 0 ]; then fail "CRLF line endings in ${f#"$repo"/}"; bad=1; fi
 done < <(find "$layer" "$repo/kas" "$repo/scripts" "$repo/tests" -type f \
     \( -name '*.sh' -o -name '*.bb' -o -name '*.bbappend' -o -name '*.conf' -o -name '*.yml' -o -name '*.service' -o -name '*.rules' \
     -o -name 'gnss-sdr-preflight' -o -name 'gnss-mcu-flash' -o -name '*.default' -o -name '*.cfg' -o -name '*.py' \))
