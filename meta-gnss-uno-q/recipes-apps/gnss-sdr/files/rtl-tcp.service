@@ -12,6 +12,8 @@ Type=simple
 User=gnss
 Group=gnss
 SupplementaryGroups=plugdev
+# Defaults, overridden by /etc/default/gnss-sdr when it sets them.
+Environment=RTL_TCP_ADDRESS=127.0.0.1 RTL_TCP_PORT=1234 RTL_TCP_EXTRA_ARGS=
 EnvironmentFile=-/etc/default/gnss-sdr
 # Loopback only: the raw I/Q stream is not exposed on the network.
 ExecStart=/usr/bin/rtl_tcp -a ${RTL_TCP_ADDRESS} -p ${RTL_TCP_PORT} $RTL_TCP_EXTRA_ARGS
