@@ -5,30 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GNSS-SDR Live Monitor</title>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
-
-  <!-- Leaflet (OpenStreetMap) -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+  <!-- Chart.js and Leaflet are served by the monitor itself (no CDN): the UI
+       works on a receiver without Internet access, except for the map tiles. -->
+  <script src="vendor/chart.umd.js"></script>
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <script src="vendor/leaflet/leaflet.js"></script>
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css" />
-
-  <script>
-    // Initial history length for plots
-    window.INIT_MAX_POINTS = 300;
-  </script>
 </head>
 <body>
   <header class="topbar">
@@ -56,12 +40,11 @@
         <div class="stack">
           <section class="card" id="gnss-control-card">
             <h2>GNSS-SDR Control</h2>
-            <small>Start/stop local gnss-sdr process</small>
+            <small>Start/stop the GNSS-SDR receiver</small>
+            <!-- One "Start" button per configuration file found on the server -->
+            <div class="gnss-control-row" id="gnss-config-buttons"></div>
             <div class="gnss-control-row">
-              <button id="btn-gnss-start">Replay Rocket launch</button>
-              <button id="btn-gnss-start-2">Start GNSS-SDR (RTL Real-Time)</button>
-              <button id="btn-gnss-start-3">Replay LEO Cubesat</button>
-              <button id="btn-gnss-stop" class="stop">Stop</button>
+              <button id="btn-gnss-stop" class="stop" type="button" disabled>Stop</button>
             </div>
           </section>
 
@@ -114,16 +97,7 @@
     <section class="page" id="page-historics" aria-labelledby="tab-historics">
       <section class="card" id="plots-card">
         <h2>Time Series Plots</h2>
-        <small>Fixed history: 3000 samples – Chart.js</small>
-
-        <div id="decimation-container">
-          <span>Decimation:</span>
-          <select id="decimation-select">
-            <option value="1">None</option>
-            <option value="10">1 / 10</option>
-            <option value="50">1 / 50</option>
-          </select>
-        </div>
+        <small>History: 3000 samples per series (the most recent 600 are drawn)</small>
 
         <div class="plot-wrapper">
           <div class="plot-title">Altitude [m]</div>
