@@ -20,7 +20,7 @@ Each has a fallback in [ADR-002](decisions/ADR-002-gnss-sdr-recipe.md) or [ADR-0
 
 | # | Risk | Why it is uncertain |
 |---|---|---|
-| B1 | GNSS-SDR v0.0.22 against GNU Radio from `meta-sdr` | `meta-sdr` builds a snapshot of GNU Radio's development branch, not a release |
+| B1 | GNU Radio 3.10.12.0 with `meta-sdr`'s recipe | The version risk is removed: GNU Radio and VOLK are pinned to the releases validated on the board (3.10.12.0, 3.2.0). `meta-sdr`'s recipe and packaging were written for the development branch; one patch was dropped (gr-qtgui). Building GNU Radio alone will show whether anything else differs |
 | B2 | `lapack` needs a Fortran compiler | Enabled with `FORTRAN:forcevariable` in the distro; not yet seen to work with this BSP's toolchain settings |
 | B3 | `volk_gnsssdr` / `cpu_features` cross-compilation | Built in-tree by GNSS-SDR's CMake as a sub-project with its own toolchain handling |
 | B4 | `matio` from git without its submodule, with autotools | The reference recipe fetched the submodule |

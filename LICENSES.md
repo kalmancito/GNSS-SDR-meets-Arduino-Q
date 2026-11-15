@@ -21,8 +21,8 @@ Main components and their licences as declared upstream at the pinned revisions:
 | Component | Licence |
 |---|---|
 | GNSS-SDR 0.0.22 (includes volk_gnsssdr) | GPL-3.0-or-later |
-| GNU Radio | GPL-3.0 |
-| VOLK | LGPL-3.0-or-later |
+| GNU Radio 3.10.12.0 | GPL-3.0 |
+| VOLK 3.2.0 | LGPL-3.0-or-later |
 | rtl-sdr | GPL-2.0-only |
 | Armadillo | Apache-2.0 |
 | Matio | BSD-2-Clause |
