@@ -56,14 +56,16 @@ for f in rawprogram0.xml patch0.xml prog_firehose_ddr.elf; do
 done
 [ -f "$flashdir/contents.xml" ] && grep -qi 'emmc' "$flashdir/contents.xml" \
     || die "contents.xml does not describe an eMMC image. The UNO Q has an eMMC; refusing to continue."
+# Image names are <image>-<MACHINE>.rootfs[-<date>].qcomflash. Match the
+# machine part exactly: "uno-q" alone also appears in the image name.
 case "$(basename "$flashdir")" in
-    *"$MACHINE_NAME"*) ;;
-    *) die "'$(basename "$flashdir")' does not look like an image for machine $MACHINE_NAME. Files built for another board (e.g. RB3 Gen 2) must never be written to an UNO Q." ;;
+    *"-$MACHINE_NAME.rootfs"*) ;;
+    *) die "'$(basename "$flashdir")' is not named like an image for machine $MACHINE_NAME (*-$MACHINE_NAME.rootfs*). Files built for another board (e.g. RB3 Gen 2) must never be written to an UNO Q." ;;
 esac
 
 # ---- 2. what would be written --------------------------------------------------------
 info "Partitions that will be written (from rawprogram0.xml):"
-python3 - "$flashdir/rawprogram0.xml" "$flashdir" << 'EOF'
+python3 - "$flashdir/rawprogram0.xml" "$flashdir" << 'EOF' || die "rawprogram0.xml names files that are not in $flashdir (marked MISSING above): incomplete image, refusing to continue."
 import os, sys, xml.etree.ElementTree as ET
 xml, base = sys.argv[1], sys.argv[2]
 rows, missing = [], 0

@@ -39,7 +39,7 @@ if dmesg 2> /dev/null | grep -qiE 'out of memory|oom-killer'; then problem "the 
 
 section "Boot slot (A/B)"
 if have qbootctl; then
-    qbootctl -d 2>&1 | head -n 20
+    qbootctl 2>&1 | head -n 20    # without arguments it prints the slot table
     if systemctl is-active --quiet qbootctl-bless-boot.service 2> /dev/null || systemctl show -p Result --value qbootctl-bless-boot.service 2> /dev/null | grep -q success; then
         ok "boot marked successful (qbootctl-bless-boot)"
     else
