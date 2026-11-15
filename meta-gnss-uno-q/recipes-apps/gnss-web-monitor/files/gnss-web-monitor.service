@@ -1,0 +1,30 @@
+[Unit]
+Description=GNSS-SDR web monitor
+After=network.target systemd-tmpfiles-setup.service
+
+[Service]
+Type=simple
+User=gnss-web
+Group=gnss
+
+Environment=NODE_ENV=production
+# systemd owns the receiver process; the monitor only asks it to start/stop.
+Environment=GNSS_CONTROL=systemd
+Environment=GNSS_CONF_DIR=/etc/gnss-sdr
+Environment=GNSS_UNIT=gnss-sdr.service
+Environment=GNSS_SELECT_FILE=/run/gnss-sdr/selected.env
+Environment=GNSS_DEFAULTS_FILE=/etc/default/gnss-sdr
+EnvironmentFile=-/etc/default/gnss-web-monitor
+
+ExecStart=/usr/bin/gnss-web-monitor
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/run/gnss-sdr
+
+[Install]
+WantedBy=multi-user.target

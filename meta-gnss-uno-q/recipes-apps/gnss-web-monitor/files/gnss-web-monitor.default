@@ -1,0 +1,15 @@
+# Settings for gnss-web-monitor.service.
+# After editing:  systemctl restart gnss-web-monitor
+
+# Where the web UI and the REST API listen.
+# The UI can start and stop the receiver and has no login: anyone who can reach
+# this port can do so. On an untrusted network set HTTP_HOST=127.0.0.1 and
+# reach the UI through an SSH tunnel:  ssh -L 8080:127.0.0.1:8080 root@<board>
+HTTP_HOST=0.0.0.0
+HTTP_PORT=8080
+
+# Where the GNSS-SDR monitor datagrams are received. Loopback: the receiver
+# runs on this board. Must match PVT.monitor_udp_port / Monitor.udp_port.
+UDP_HOST=127.0.0.1
+UDP_PORT_PVT=1111
+UDP_PORT_OBS=1112

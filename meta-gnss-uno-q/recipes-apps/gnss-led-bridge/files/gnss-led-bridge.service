@@ -1,0 +1,29 @@
+[Unit]
+Description=GNSS status bridge for the LED matrix (STM32)
+# Ordering only: nothing requires this unit and it requires nothing. If the
+# MCU link or the web monitor is down it keeps retrying on its own, and the
+# receiver is not affected either way.
+After=arduino-router.service gnss-web-monitor.service
+
+[Service]
+Type=simple
+# No dedicated account needed; the router's socket belongs to group arduino-router.
+DynamicUser=yes
+SupplementaryGroups=arduino-router
+
+Environment=PYTHONUNBUFFERED=1
+Environment=NODE_BASE_URL=http://127.0.0.1:8080
+Environment=POLL_HZ=2
+Environment=MAX_BARS=6
+Environment=ROUTER_ADDRESS=unix:///var/run/arduino-router.sock
+EnvironmentFile=-/etc/default/gnss-led-bridge
+
+ExecStart=/usr/bin/python3 /usr/share/gnss-led-bridge/gnss_led_bridge.py
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=yes
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
