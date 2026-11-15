@@ -1,0 +1,11 @@
+# Bring-up overlay: root logs in without a password on the serial console and
+# over SSH. For the first boots on real hardware only - never ship this.
+#
+#   kas-container build kas/uno-q-gnss-sdr.yml:kas/include/debug.yml
+
+header:
+  version: 14
+
+local_conf_header:
+  debug: |
+    EXTRA_IMAGE_FEATURES += "allow-empty-password empty-root-password allow-root-login"

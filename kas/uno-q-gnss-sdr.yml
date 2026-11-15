@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+#
+# Product build: the GNSS-SDR receiver image for the Arduino UNO Q.
+# Adds, on top of the pinned BSP (kas/uno-q-upstream.yml):
+#   - meta-openembedded (same release) for the libraries GNSS-SDR needs,
+#   - meta-sdr for GNU Radio, VOLK and rtl-sdr,
+#   - meta-gnss-uno-q, the product layer in this repository.
+#
+#   kas-container build kas/uno-q-gnss-sdr.yml                          # product
+#   kas-container build kas/uno-q-gnss-sdr.yml:kas/include/debug.yml    # bring-up
+#   kas-container build kas/uno-q-gnss-sdr.yml --target gnss-sdr        # one recipe
+
+header:
+  version: 14
+  includes:
+    - kas/uno-q-upstream.yml
+
+distro: gnss-uno-q
+
+target:
+  - gnss-uno-q-image
+
+repos:
+  # This repository.
+  gnss-uno-q:
+    layers:
+      meta-gnss-uno-q:
+
+  meta-openembedded:
+    url: https://github.com/openembedded/meta-openembedded
+    branch: wrynose
+    commit: c734c2cb9713dbd6d50697a9f6c25ebdf3ae589e
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-filesystems:   # required by meta-sdr
+
+  # GNU Radio, VOLK, rtl-sdr. Its master branch declares wrynose compatibility;
+  # there is no release branch for wrynose.
+  meta-sdr:
+    url: https://github.com/balister/meta-sdr
+    branch: master
+    commit: 69285532b4ab4997cb0fea470e0dc3b38788ad00
+
+local_conf_header:
+  # Replaces the bring-up fragment of the base manifest: the product image has
+  # no password-less root. Distro features are set in conf/distro/gnss-uno-q.conf.
+  extra: |
+    IMAGE_ROOTFS_EXTRA_SPACE = "307200"
+    WATCHDOG_RUNTIME_SEC:pn-systemd = "30"

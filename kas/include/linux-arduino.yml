@@ -1,0 +1,15 @@
+# Alternative kernel: Arduino's linux-arduino (7.2.x) instead of the BSP
+# default linux-qcom (6.18.x). Both recipes come from the pinned BSP layers.
+#
+# Use it only if scripts/validate-image.sh reports that the default kernel's
+# device tree lacks the UART to the STM32 (alias serial1 -> /dev/ttyHS1) that
+# the LED matrix bridge needs. Record the outcome in docs/known-issues.md.
+#
+#   kas-container build kas/uno-q-gnss-sdr.yml:kas/include/linux-arduino.yml
+
+header:
+  version: 14
+
+local_conf_header:
+  kernelprovider: |
+    PREFERRED_PROVIDER_virtual/kernel = "linux-arduino"
