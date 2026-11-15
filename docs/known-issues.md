@@ -7,7 +7,8 @@ Last updated: 2026-11-15. No build has been run yet, so this list holds what is 
 | # | What | Consequence | To close it |
 |---|---|---|---|
 | U1 | `arduino-router-go-mods.inc` and `-licenses.inc` do not exist | `arduino-router` does not compile (modules cannot be downloaded during the build), so the image does not build either | `scripts/update-go-mods.sh` on the build host; commit the two files |
-| U2 | `gps-l1ca-live.conf` holds upstream's example values, not the demo's validated tuning | Live reception may be worse than the demo's (1 ms integration instead of 4 ms; gains not adapted) | Recover `all_bands_rtl_realtime.conf` with `scripts/capture-board-info.sh` and carry its values over; re-run `tests/test-configs.sh` |
+| ~~U2~~ | ~~`gps-l1ca-live.conf` holds upstream's example values~~ | Closed 2026-11-15: the demo's configuration was recovered from the board and its signal-processing values carried over (2.048 MS/s, 7 channels, 4 ms integration, narrow loops). The source differs: the demo used `Osmosdr_Signal_Source`, the image uses `rtl_tcp` ([ADR-003](decisions/ADR-003-signal-sources.md)) | - |
+| U7 | The two file-replay configurations of the demo (`file_GPS_L1_alta_dinamica.conf`, `cubesat_GPS.conf`) and their captures are not on the board | Those demos cannot be reproduced from what was recovered | Find them on the machine they were recorded on; document each capture in `tests/fixtures/README.md` |
 | U3 | No reference position for the test capture | Accuracy (G04) cannot be judged; only "fixes obtained" | Record surveyed coordinates or a trusted receiver's solution in `tests/fixtures/README.md` |
 | U4 | SHA-256 of the test capture not recorded | The capture is verified by size and by the archive's MD5 only | Run `tests/fixtures/fetch-test-capture.sh` and write the printed hash into the README |
 | U5 | Web monitor tests and shellcheck not run | Node.js code was reviewed and has tests, but they have not executed anywhere yet | `npm ci && npm test` on the build host; `shellcheck scripts/*.sh tests/*.sh` |
@@ -33,8 +34,8 @@ Each has a fallback in [ADR-002](decisions/ADR-002-gnss-sdr-recipe.md) or [ADR-0
 | # | Risk | Detail |
 |---|---|---|
 | H1 | UART to the STM32 missing with the default kernel | `/dev/ttyHS1` needs the `serial1` alias in the device tree; checked on the built DTB by `scripts/validate-image.sh`; fallback `--linux-arduino` |
-| H2 | GPIO chip/line numbers differ from the factory kernel | The router unit and the OpenOCD configuration use `gpiochip1` lines 25, 26, 37, 38, 70 as on the factory system. Wrong numbers mean no LED matrix, and in the worst case a line driven that should not be. **Compare `gpioinfo` with the factory inventory before enabling `arduino-router`** on a new kernel |
-| H3 | Wi-Fi identity after a full flash | Not verified whether the MAC address and calibration survive rewriting the whole eMMC and a later factory restore |
+| H2 | GPIO chip/line numbers differ from the factory kernel | Confirmed on the factory kernel (6.16): `gpiochip1` is the SoC pin controller (`500000.pinctrl`, 127 lines), lines 25/26 (SWD) and 37/38 are outputs, and the factory router unit drives 37 and 70 as this image's does. Still to check under the Yocto kernel (6.18): **compare `gpioinfo` with [the inventory](logs/board-inventory-20261115/gpio.txt) before relying on `arduino-router`** |
+| H3 | Device partitions after a full flash | Measured: the MAC addresses (eMMC `boot0`) are kept; `persist`, `modemst1/2`, `fsg`, `fsc` change place and lose their factory content, also after restoring the factory image. Effect on Wi-Fi under Yocto unknown. Mitigation: mandatory backup and restore procedure ([flashing-and-recovery.md](flashing-and-recovery.md#calibration-and-identity-partitions)) |
 | H4 | USB host mode and dongle power | Depends on how the board is powered; see [board-access.md](board-access.md) |
 | H5 | `rtl_tcp` single-client behaviour | The pre-start check probes the port and waits 1 s before the receiver connects; if `rtl_tcp` needs longer to accept again, the first start fails and systemd retries after 10 s |
 | H6 | Real-time margin on the Cortex-A53 | Unknown for this build until P01; the demo's 7 channels are the reference point |
@@ -43,7 +44,7 @@ Each has a fallback in [ADR-002](decisions/ADR-002-gnss-sdr-recipe.md) or [ADR-0
 
 - **The web UI has no authentication.** Anyone who can reach port 8080 can start and stop the receiver. Cross-site requests are refused (JSON-only POST, no CORS headers), which stops a web page in someone's browser from doing it, but not a person on the same network. Restrict with `HTTP_HOST=127.0.0.1` and an SSH tunnel, or a firewall.
 - **Map tiles need Internet.** Everything else in the UI is served by the board.
-- **Receiver outputs grow.** RINEX and NMEA files accumulate in `/var/lib/gnss-sdr/output/`; nothing rotates them yet. On a 16 GB eMMC, clear them periodically or turn them off in the profile for long runs.
+- **Receiver outputs grow.** The file profile writes RINEX and NMEA to `/var/lib/gnss-sdr/output/`; nothing rotates them. The live profile writes no files (as the demo), only the monitor streams. On a 16 GB eMMC, clear the output directory after file runs.
 - **`volk_gnsssdr_profile` is not run automatically.** It takes minutes and would delay the first boot. Run `gnss-benchmark --profile` once.
 - **The position chart plots latitude, longitude (degrees) and height (metres) on one axis**, as the original UI did; the statistics page is the readable view of position spread.
 - **Leap seconds are hard-coded (18 s) in the web UI's GPS-to-UTC conversion.**

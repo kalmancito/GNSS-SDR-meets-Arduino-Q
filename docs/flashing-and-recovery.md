@@ -18,9 +18,17 @@ Do these on the factory system, while it still works.
 
    Saves the partition table, kernel, GPIO layout, services and versions to `docs/logs/board-inventory-<date>/`, and copies `~/gnss-sdr/conf/*.conf` off the board.
 
-2. **Copy off anything else you want to keep** from `/home/arduino` (captures are large; copy them over the network or to a USB drive).
+2. **Back up the board's own partitions** (calibration, the modem/Wi-Fi file system, the MAC addresses):
 
-3. **Download the factory image now**, not when you need it. With Arduino's [`arduino-flasher-cli`](https://github.com/arduino/arduino-flasher-cli):
+   ```bash
+   scripts/backup-board-partitions.sh arduino@<board>
+   ```
+
+   It asks for the board's sudo password once, reads the partitions into the board's RAM (`/tmp` is a tmpfs; nothing is written to the eMMC), copies them to `local/board-backup-<date>/` on the PC with checksums, and deletes the temporary copy. The result contains the board's MAC addresses: keep it private. `flash-guarded.sh --execute` refuses to run without it. Why it matters: [Calibration and identity partitions](#calibration-and-identity-partitions).
+
+3. **Copy off anything else you want to keep** from `/home/arduino` (captures are large; copy them over the network or to a USB drive).
+
+4. **Download the factory image now**, not when you need it. With Arduino's [`arduino-flasher-cli`](https://github.com/arduino/arduino-flasher-cli):
 
    ```bash
    arduino-flasher-cli list unoq
@@ -29,7 +37,7 @@ Do these on the factory system, while it still works.
 
    Note where the file ends up; `flash-guarded.sh --execute` asks for it.
 
-4. **Rehearse the recovery tool** once if you can: at least confirm it starts and sees the board in EDL mode (next section). A recovery path that has never been tried is a hope, not a path.
+5. **Rehearse the recovery tool** once if you can: at least confirm it starts and sees the board in EDL mode (next section). A recovery path that has never been tried is a hope, not a path.
 
 ## Entering EDL mode
 
@@ -54,14 +62,15 @@ On a Linux PC with [`qdl`](https://github.com/linux-msm/qdl) 2.x and the build o
 scripts/flash-guarded.sh
 ```
 
-This is a **dry run**. It checks that the directory is an eMMC image for `uno-q`, lists every partition that would be written with its file and size, and prints the command. Read the list.
+This is a **dry run**. It checks that the directory is an eMMC image for `uno-q`, lists every partition that would be written with its file and size, and prints the command. Read the list. With `--inventory DIR` (or `--backup DIR`) it also shows which of the board's own partitions change place.
 
 When everything above is done and the board is in EDL mode:
 
 ```bash
 scripts/flash-guarded.sh --execute \
     --recovery-image /path/to/factory-image \
-    --inventory docs/logs/board-inventory-<date>
+    --inventory docs/logs/board-inventory-<date> \
+    --backup local/board-backup-<date>
 ```
 
 It asks you to type a confirmation phrase, then runs, inside the flash directory:
@@ -103,11 +112,46 @@ arduino-flasher-cli flash unoq
 
 It writes Arduino's Debian image with the factory partition layout. Afterwards remove the jumper and power-cycle. The first boot of the factory image takes a while.
 
-Then compare the Wi-Fi MAC address with the one in your inventory; whether identity and calibration data survive a full Yocto flash and a restore is not verified ([known-issues.md](known-issues.md)).
+Then check Wi-Fi and Bluetooth, and restore the device partitions if needed (next section).
+
+## Calibration and identity partitions
+
+Facts from the board's inventory (2026-11-15, [partition-offsets.txt](logs/board-inventory-20261115/partition-offsets.txt)) and the pinned layout (qcom-ptool `5da6896f`, `platforms/_common/qrb2210-abl-emmc.yaml`):
+
+- **The MAC addresses are safe.** Arduino keeps `bdaddr` and `wlanaddr` (and a `persist` copy) in the eMMC's hardware boot area `boot0`, and the `CDT` in `boot1`. The Yocto layout only describes the main area and does not write either boot area.
+- **Five partitions change place.** The Yocto layout has a larger `hyp` (8 MB instead of 512 KB) and two extra 64 MB `dtb` partitions, so everything after them moves, and nothing is written to them:
+
+  | Partition | Factory start | Yocto start (estimated) | Used by |
+  |---|---|---|---|
+  | `persist` | 393752 | 686616 | not mounted by the factory Debian |
+  | `modemst1`, `modemst2`, `fsg`, `fsc` | 972864 - 985152 | 1266298 - 1278586 | `rmtfs`: the file system of the DSP that runs the Wi-Fi firmware |
+
+  Sectors of 512 bytes. The Yocto column assumes the partitions are packed from the first factory sector, as the factory layout is; `flash-guarded.sh` prints the exact values from the built `rawprogram0.xml`.
+
+- After the flash, the new `modemst*`/`fsg`/`fsc` hold leftovers of the old `efi` partition, and the new `persist` leftovers of `rawdump`/`splash`. The factory contents of those partitions now lie inside the new `rawdump` and `dtb_b`; `dtb_b` is written by the flash, so part of the factory `persist` is overwritten.
+- **Restoring the factory image does not put them back**: they are per-board data and the flasher has no copy of yours. Only the backup has it.
+
+What this does to Wi-Fi under Yocto is **not known yet**: the DSP may reinitialise a file system it does not recognise, or Wi-Fi may fail. Decide on the board, after the first boot:
+
+1. If Wi-Fi works, leave the partitions as they are.
+2. If it does not, restore the four modem partitions from the backup. Same sizes in both layouts. As root on the Yocto system, **writing to the eMMC, with the owner's go-ahead**:
+
+   ```bash
+   systemctl stop rmtfs 2> /dev/null || true
+   for p in modemst1 modemst2 fsg fsc; do
+       dd if=/root/backup/$p.img of=/dev/disk/by-partlabel/$p bs=64k conv=fsync
+   done
+   reboot
+   ```
+
+   (Copy the images to `/root/backup/` first and check them against `SHA256SUMS`.) Do not use `by-partlabel/persist`: the name exists twice, in the main area and in `boot0`.
+
+After going back to the factory image, the same four files (and `persist.img`, to `/dev/mmcblk0p33` on the factory layout) restore the factory state.
 
 ## Checklist
 
 - [ ] Inventory captured and configuration files copied off the board
+- [ ] Partition backup taken (`scripts/backup-board-partitions.sh`) and kept private
 - [ ] Other data in `/home/arduino` copied
 - [ ] Factory image downloaded; recovery tool tried
 - [ ] Serial console adapter is **1.8 V** and works on the factory system

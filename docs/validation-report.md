@@ -4,7 +4,7 @@ State of every test of the project. A result is `PASS` or `FAIL` only if the tes
 
 **Last updated: 2026-11-15. No build and no hardware test has been run for the Yocto image.**
 
-Summary: 4 static tests `PASS`, 3 static tests `NOT RUN`; every build, hardware, receiver, performance and operation test `NOT RUN`.
+Summary: 4 static tests `PASS`, 3 static tests `NOT RUN`; the factory board inventory `PASS`; every build, hardware, receiver, performance and operation test `NOT RUN`.
 
 ## Static tests (run without a build host or a board)
 
@@ -37,11 +37,12 @@ All **PENDING HARDWARE TEST**. They need the board, a 1.8 V serial adapter, and 
 
 | ID | Criterion | Method | Result | Evidence |
 |---|---|---|---|---|
-| R00 | Factory system inventoried, configurations saved | `scripts/capture-board-info.sh arduino@<board>` | NOT RUN | `docs/logs/board-inventory-<date>/` |
+| R00 | Factory system inventoried, configurations saved | `scripts/capture-board-info.sh arduino@<board>` | **PASS** (2026-11-15) | [`docs/logs/board-inventory-20261115/`](logs/board-inventory-20261115/): Debian 13.2, kernel 6.16.7, 2 GB RAM / 16 GB eMMC, GNSS-SDR 0.0.20, `/dev/ttyHS1` present, partition offsets, the demo's live configuration |
+| R00b | Device partitions backed up (calibration, modem file system, MACs) | `scripts/backup-board-partitions.sh arduino@<board>` (needs the board's sudo password) | NOT RUN | `local/board-backup-<date>/` (private; not committed) |
 | R01 | Recovery works | [flashing-and-recovery.md](flashing-and-recovery.md): restore the factory image from EDL | NOT RUN | tool output, boot of the restored system |
 | H01 | The image boots on a real UNO Q | serial console to login prompt | NOT RUN | boot log |
 | H02 | It keeps booting (A/B slot marked good) | 5+ reboots, `gnss-diagnose` each time | NOT RUN | logs |
-| H03 | USB host: the dongle enumerates and streams without loss | `lsusb`, `rtl_test -s 1200000` for 60 s | NOT RUN | output |
+| H03 | USB host: the dongle enumerates and streams without loss | `lsusb`, `rtl_test -s 2048000` for 60 s | NOT RUN | output |
 | H04 | Network and SSH | `nmcli`, `ssh` | NOT RUN | - |
 
 ## Receiver tests

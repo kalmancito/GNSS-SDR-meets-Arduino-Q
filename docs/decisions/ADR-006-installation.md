@@ -14,13 +14,19 @@ Facts ([research](../research.md#flashing-and-recovery)): the BSP produces a com
 2. **Full flash, as the BSP defines it.** The option of rewriting only `efi` and `rootfs` and keeping the factory boot firmware (described in some third-party guides) is not used: the two partition layouts differ, and mixing them is exactly the untested combination to avoid.
 3. **No flash without a proven way back.** Recovery is Arduino's `arduino-flasher-cli` with the factory image **downloaded beforehand**. EDL mode is entered with a hardware jumper and does not depend on anything stored on the eMMC, so it stays available even if the new image does not boot.
 4. **`scripts/flash-guarded.sh` is the only entry point.** It is a dry run unless `--execute` is given, lists every partition it would write, refuses images that are not for `uno-q`/eMMC, and for a real write demands: the device in EDL mode, the recovery image on disk, the board inventory, and a typed confirmation.
-5. **Inventory first.** `scripts/capture-board-info.sh` records the factory system (partitions, kernel, GPIO, services, versions) and copies the GNSS-SDR configuration files off the board.
+5. **Inventory first.** `scripts/capture-board-info.sh` records the factory system (partitions and their offsets, kernel, GPIO, services, versions) and copies the GNSS-SDR configuration files off the board.
+6. **Back up the device-specific partitions.** See below.
 
 ## What is not preserved
 
-Everything on the eMMC. Specifically `/home/arduino`: receiver configurations, captures, Arduino App Lab apps.
+The whole main eMMC area. Specifically `/home/arduino`: receiver configurations, captures, Arduino App Lab apps.
 
-What is **not** on the eMMC and survives: the STM32's own flash (the sketch), and whatever identity/calibration data the SoC keeps outside the rewritten partitions. Whether the Wi-Fi MAC address and calibration survive a full flash is **not verified**; the inventory records the MAC so it can be compared afterwards ([known-issues.md](../known-issues.md)).
+Measured on the board on 2026-11-15 ([details](../flashing-and-recovery.md#calibration-and-identity-partitions)):
+
+- **Kept:** the eMMC hardware boot areas, where Arduino stores the Bluetooth and Wi-Fi MAC addresses (`bdaddr`, `wlanaddr`), a `persist` copy and the `CDT`. The Yocto layout does not write them. Also kept: the STM32's own flash (the sketch).
+- **Moved, therefore lost in place:** `persist`, `modemst1`, `modemst2`, `fsg`, `fsc` (the DSP file system served by `rmtfs`). The Yocto layout puts them at other offsets and writes nothing into them; restoring the factory image does not recreate their content.
+
+Hence decision 6: **a partition backup is mandatory before flashing** (`scripts/backup-board-partitions.sh`; `flash-guarded.sh --execute` checks it). It reads the partitions as root into RAM and copies them off the board; nothing is written to the eMMC. Restoring them is a separate, deliberate write, documented step by step.
 
 ## Boot slots
 
