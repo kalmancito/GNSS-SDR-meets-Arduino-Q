@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: MPL-2.0
 //
-// UNO Q (8x13, 3-bit grayscale) GNSS Binary Dashboard - FINAL
+// UNO Q (8x13, 3-bit grayscale) GNSS Binary Dashboard
 //
-// Current assumptions (as validated in your system):
-// - GNSS-SDR / RTKLIB "solution_status":
-//      0   => no PVT
-//     >=4  => PVT available
-// - Python maps that to:
-//      P=0  (no PVT)  -> blink
-//      P=2  (has PVT) -> solid
+// Runs on the STM32U585 of the Arduino UNO Q. It asks the Linux side for the
+// receiver status through the Arduino router bridge and draws it on the matrix.
 //
-// Bridge contract (STRING):
-//   get_gnss_status() -> "P=<0|2>;S=<int>;A=<sec>;H=<deg>;V=<mps>;C=<cn0_1,cn0_2,...>"
+// Bridge contract (STRING), produced by apps/led-matrix/python/gnss_status.py:
+//   get_gnss_status() -> "P=<0|2>;S=<int>;A=<sec>;H=<deg>;V=<mps>;C=<cn0_1,cn0_2,...>;"
+//     P  0 = no position fix -> the PVT indicator blinks
+//        2 = position fix    -> the PVT indicator is solid
+//     S  satellites in the fix (or tracked, while there is no fix), 0..12
+//     A  age of the last PVT in seconds (drives the blink rate)
+//     H  course over ground in degrees, V horizontal speed in m/s (moving dot)
+//     C  up to 6 C/N0 values in dB-Hz, strongest first (bars)
 
 #include <Arduino_RouterBridge.h>
 #include <Arduino_LED_Matrix.h>

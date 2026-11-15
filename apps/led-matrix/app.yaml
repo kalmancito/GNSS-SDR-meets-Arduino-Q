@@ -1,5 +1,4 @@
 name: gnss sdr LED
 description: GNSS-SDR monitor with Node.js backend and Python client
-ports:
-- 8081
+ports: []
 bricks: []
