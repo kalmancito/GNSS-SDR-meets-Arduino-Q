@@ -23,6 +23,8 @@ meta-sdr             master                    69285532b4ab4997cb0fea470e0dc3b38
 ## Sources fetched by recipes of meta-gnss-uno-q
 # recipe                          version    revision / checksum                                                  source
 gnss-sdr                          0.0.22     3fcb502aeb618968cd24492010fb8186f122efda                             https://github.com/gnss-sdr/gnss-sdr (tag v0.0.22)
+gnuradio (bbappend on meta-sdr)   3.10.12.0  ec7a3239645162ffea1925e6f1e6e62bf1349d03                             https://github.com/gnuradio/gnuradio (tag v3.10.12.0, branch maint-3.10)
+volk (bbappend on meta-sdr)       3.2.0      308948abf8384bb4bf6467e14b585df708789782                             https://github.com/gnuradio/volk (tag v3.2.0; submodule cpu_features ba4bffa8)
 armadillo                         15.6.2     734fc0957153df38ae337e79ba20e28b8c105461                             https://gitlab.com/conradsnicta/armadillo-code (tag 15.6.2)
 matio                             1.5.29     9a032693865af286a1ebb1bb0a0fac726553dea3                             https://github.com/tbeu/matio (tag v1.5.29)
 arduino-router                    0.11.0     cb7b2cecee1c04e0ba0a7fb48da63a8a7a1dba71                             https://github.com/arduino/arduino-router (tag v0.11.0)
