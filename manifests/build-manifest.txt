@@ -1,0 +1,8 @@
+# Build manifest
+#
+# NOT GENERATED YET: no build has been run from this repository.
+#
+# scripts/inspect-bitbake.sh overwrites this file with what BitBake actually
+# resolved for a build: layer revisions, the gnss-sdr recipe's SRCREV, DEPENDS,
+# PACKAGECONFIG and EXTRA_OECMAKE, TUNE_FEATURES, DISTRO_FEATURES and the kernel
+# provider. Attach it to every entry of docs/validation-report.md.
