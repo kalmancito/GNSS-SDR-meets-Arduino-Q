@@ -38,8 +38,9 @@ mask() {
     if [ "$raw" -eq 1 ]; then
         cat
     else
-        # MAC addresses, then anything labelled as a serial number.
-        sed -E 's/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/XX:XX:XX:XX:XX:XX/g; s/([Ss]erial( [Nn]umber)?[^:=]*[:=][[:space:]]*)[A-Za-z0-9._-]+/\1<masked>/'
+        # MAC addresses, anything labelled as a serial number, the systemd
+        # machine id (32 hex digits, also in journal paths) and filesystem UUIDs.
+        sed -E 's/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/XX:XX:XX:XX:XX:XX/g; s/([Ss]erial( [Nn]umber)?[^:=]*[:=][[:space:]]*)[A-Za-z0-9._-]+/\1<masked>/; s/[0-9a-f]{32}/<machine-id>/g; s/(UUID=)[0-9a-fA-F-]+/\1<masked>/g'
     fi
 }
 
@@ -60,6 +61,10 @@ run cpuinfo         'lscpu 2>/dev/null || cat /proc/cpuinfo'
 run meminfo         'head -n 8 /proc/meminfo; free -m'
 run block-devices   'lsblk -o NAME,SIZE,TYPE,FSTYPE,PARTLABEL,MOUNTPOINTS 2>/dev/null || lsblk'
 run partitions      'ls -l /dev/disk/by-partlabel/ 2>/dev/null; cat /proc/partitions'
+# Name, first sector and size (512-byte sectors) of every eMMC partition,
+# including the hardware boot areas. flash-guarded.sh compares these with the
+# layout it is about to write. Readable without root.
+run partition-offsets 'for d in /sys/class/block/mmcblk0p* /sys/class/block/mmcblk0boot*p*; do echo "$(basename $d) $(sed -n "s/^PARTNAME=//p" $d/uevent) $(cat $d/start) $(cat $d/size)"; done | sort -k1,1V; echo; systemctl cat rmtfs.service 2>/dev/null | grep ^ExecStart'
 run mounts          'findmnt -A 2>/dev/null || mount'
 run disk-usage      'df -h'
 run kernel-cmdline  'cat /proc/cmdline'
@@ -86,7 +91,16 @@ info "Copying GNSS-SDR configuration files"
 mkdir -p "$out/gnss-sdr-conf"
 if "${ssh_cmd[@]}" 'test -d ~/gnss-sdr/conf'; then
     # tar over ssh: no rsync/scp needed on the board, only .conf files travel.
-    "${ssh_cmd[@]}" 'cd ~/gnss-sdr/conf && find . -name "*.conf" -print0 | tar --null -cf - -T -' | tar -xf - -C "$out/gnss-sdr-conf"
+    # When ~/gnss-sdr is a git checkout, copy only the configurations that are
+    # new or modified there; the untouched upstream examples are in GNSS-SDR's
+    # own repository and would only bury the user's files.
+    "${ssh_cmd[@]}" 'cd ~/gnss-sdr/conf &&
+        if git -C .. rev-parse --git-dir > /dev/null 2>&1; then
+            git -C .. status --porcelain --untracked-files=all -- conf | sed -n "s#^.. conf/##p" | grep "\.conf$"
+        else
+            find . -name "*.conf" | sed "s#^\./##"
+        fi | tr "\n" "\0" | tar --null -cf - -T -' | tar -xf - -C "$out/gnss-sdr-conf"
+    "${ssh_cmd[@]}" 'git -C ~/gnss-sdr log -1 --format="checkout: %h %s" 2> /dev/null' > "$out/gnss-sdr-conf/SOURCE.txt" || true
     find "$out/gnss-sdr-conf" -name '*.conf' | sed "s#^$out/#    #"
 else
     warn "~/gnss-sdr/conf not found on the board; no configuration files copied."
