@@ -21,7 +21,9 @@ cd "$REPO_DIR"
 recipe_dir="meta-gnss-uno-q/recipes-mcu/arduino-router"
 
 info "Resolving Go modules for arduino-router"
-kas_container shell kas/uno-q-gnss-sdr.yml -c 'bitbake -c update_modules arduino-router'
+# --repo-rw makes the required write access explicit: update_modules writes
+# the two .inc files next to the recipe.
+kas_container --repo-rw shell kas/uno-q-gnss-sdr.yml -c 'bitbake -c update_modules arduino-router'
 
 for f in arduino-router-go-mods.inc arduino-router-licenses.inc; do
     [ -s "$recipe_dir/$f" ] || die "$recipe_dir/$f was not generated."
