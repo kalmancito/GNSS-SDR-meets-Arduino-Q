@@ -1,0 +1,85 @@
+#!/bin/bash
+# Reset the UNO Q's STM32, or write a sketch to it, from the Linux side.
+#
+#   gnss-mcu-flash reset
+#   gnss-mcu-flash flash LOADER.elf SKETCH.elf-zsk.bin FLASH_SKETCH.cfg [--yes]
+#
+# "flash" runs what Arduino's own tooling runs on the board: OpenOCD with the
+# flash_sketch.cfg of the SAME arduino:zephyr core version that produced the
+# loader and the sketch (the flash layout changed between core versions, so the
+# three files must come from one build - see scripts/build-sketch.sh).
+#
+# Without --yes it only prints what it would do.
+#
+# PENDING HARDWARE TEST: not yet exercised on a board with this image.
+
+set -euo pipefail
+
+CFG_DIR=/usr/share/gnss-mcu-flash
+OPENOCD=(openocd -d2 -s "$CFG_DIR" -s /usr/share/openocd/scripts -f openocd_gpiod.cfg)
+
+usage() {
+    sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+    exit 2
+}
+
+run_with_router_stopped() {
+    # The router's stop sequence also toggles the MCU reset line: keep it out
+    # of the way while OpenOCD owns the debug port, then bring it back.
+    local was_active=0
+    if systemctl is-active --quiet arduino-router.service; then
+        was_active=1
+        systemctl stop arduino-router.service
+    fi
+    local rc=0
+    "$@" || rc=$?
+    if [ "$was_active" -eq 1 ]; then
+        systemctl start arduino-router.service
+    fi
+    return "$rc"
+}
+
+[ "$#" -ge 1 ] || usage
+cmd="$1"
+shift
+
+case "$cmd" in
+    reset)
+        run_with_router_stopped "${OPENOCD[@]}" \
+            -c "reset_config srst_only srst_push_pull; init; reset; shutdown"
+        ;;
+    flash)
+        yes=0
+        files=()
+        for arg in "$@"; do
+            case "$arg" in
+                --yes) yes=1 ;;
+                -*) echo "error: unknown option $arg" >&2; usage ;;
+                *) files+=("$arg") ;;
+            esac
+        done
+        [ "${#files[@]}" -eq 3 ] || usage
+        loader="$(readlink -f "${files[0]}")"
+        sketch="$(readlink -f "${files[1]}")"
+        cfg="$(readlink -f "${files[2]}")"
+        for f in "$loader" "$sketch" "$cfg"; do
+            [ -r "$f" ] || { echo "error: cannot read $f" >&2; exit 1; }
+        done
+
+        full=("${OPENOCD[@]}" -c "set filename $loader" -c "set filename0 $loader" -c "set filename1 $sketch" -f "$cfg")
+        echo "Loader : $loader ($(sha256sum "$loader" | cut -c1-16)...)"
+        echo "Sketch : $sketch ($(sha256sum "$sketch" | cut -c1-16)...)"
+        echo "Script : $cfg"
+        echo "Command: ${full[*]}"
+        if [ "$yes" -ne 1 ]; then
+            echo
+            echo "Dry run: nothing was written. Add --yes to flash the microcontroller."
+            exit 0
+        fi
+        run_with_router_stopped "${full[@]}"
+        echo "Done. The sketch starts once arduino-router is up again."
+        ;;
+    *)
+        usage
+        ;;
+esac
