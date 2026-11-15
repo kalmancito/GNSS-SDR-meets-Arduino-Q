@@ -95,3 +95,8 @@ local_conf_header:
   os-release: |
     OS_RELEASE_FIELDS:append = " BUILD_ID"
     BUILD_ID ?= "local-${DATETIME}"
+  # Not in Qualcomm's CI. The shared-state cache lives outside the build tree
+  # (scripts/lib.sh); keep the hash-equivalence database next to it, so a new
+  # build directory can reuse it (BitBake warns otherwise). No effect on output.
+  caches: |
+    BB_HASHSERVE_DB_DIR = "${SSTATE_DIR}"
