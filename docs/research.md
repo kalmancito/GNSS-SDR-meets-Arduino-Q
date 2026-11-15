@@ -63,6 +63,8 @@ Findings about the dependencies in the pinned layers:
 
 - GNU Radio, VOLK, `rtl-sdr` 2.0.3 and gr-osmosdr come only from `meta-sdr`. It has no `wrynose` branch, but its `master` declares `LAYERSERIES_COMPAT = "blacksail wrynose whinlatter"` and depends on `core meta-python openembedded-layer networking-layer filesystems-layer`.
 - `meta-sdr`'s GNU Radio is a snapshot of GNU Radio's `main` branch (`PV = "3.11.0.0+git"`), with `PACKAGECONFIG ??= "grc zeromq"`. The latest GNU Radio release is `v3.10.12.0` (`ec7a3239`).
+- **Found by parsing (2026-11-15):** despite declaring `wrynose`, `meta-sdr` `master` is developed against the next OE-Core series. Two of its GNU Radio 4 recipes write `LICENSE` as SPDX expressions (`AND`), which wrynose's BitBake rejects, so the whole parse fails. They are masked ([known-issues.md](known-issues.md), B9).
+- The BSP's kernel at the pinned `meta-qcom` is fixed: `linux-qcom_6.18.bb` has `SRCREV 4b7f69a1` (tag `qcom-6.18.y-20261102`, 6.18.52) with `nobranch=1`. Only its `devupstream` and `-next` variants follow a branch, and BitBake warns about them while parsing.
 - In meta-openembedded `wrynose`: abseil-cpp 20260107.1, protobuf 6.33.6, pugixml, hdf5 2.0.0, lapack 3.12.1, fftw, nodejs 22.23.4, openocd 0.12+git, libgpiod 2.2.4, polkit 127, networkmanager 1.56.0, python3-msgpack 1.1.2. In OE-Core: boost 1.90.0, Go 1.26.9, `go-mod` and `go-mod-update-modules` classes, `npm` class.
 - **No recipe for `armadillo`** in OE-Core or meta-openembedded; `matio` only in meta-ros2.
 

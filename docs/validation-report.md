@@ -4,7 +4,7 @@ State of every test of the project. A result is `PASS` or `FAIL` only if the tes
 
 **Last updated: 2026-11-15. No build and no hardware test has been run for the Yocto image.**
 
-Summary: 4 static tests `PASS`, 3 static tests `NOT RUN`; the factory board inventory `PASS`; every build, hardware, receiver, performance and operation test `NOT RUN`.
+Summary: 4 static tests `PASS`, 3 static tests `NOT RUN`; the factory board inventory `PASS`; metadata parse (B02) `PASS`; every other build test and every hardware, receiver, performance and operation test `NOT RUN`.
 
 ## Static tests (run without a build host or a board)
 
@@ -25,7 +25,7 @@ Run on 2026-11-15 on the development PC (Windows 11, Git Bash, Python 3.10).
 | ID | Criterion | Method | Result | Evidence |
 |---|---|---|---|---|
 | B01 | The pinned BSP resolves and builds | `scripts/build-base.sh` | NOT RUN | log + artifact hashes |
-| B02 | All metadata parses | `scripts/build-gnss-image.sh --parse` | NOT RUN | log |
+| B02 | All metadata parses | `scripts/build-gnss-image.sh --parse` | **PASS** (2026-11-15, 2nd run) | [parse-B02.txt](logs/build-20261115/parse-B02.txt): 3191 recipes, 0 errors, 8 masked. The 1st run **FAILED** on two meta-sdr recipes; fixed, see [known-issues B9](known-issues.md) |
 | B03 | GNSS-SDR cross-builds and packages, AArch64, nothing downloaded outside `do_fetch` | `scripts/build-gnss-image.sh --recipe gnss-sdr`; `scripts/inspect-bitbake.sh` | NOT RUN | log, `manifests/build-manifest.txt` |
 | B04 | The image builds | `scripts/build-gnss-image.sh --debug` | NOT RUN | image manifest + hashes |
 | B05 | Build output is what it should be | `scripts/validate-image.sh` | NOT RUN | its output, `manifests/artifacts.sha256` |

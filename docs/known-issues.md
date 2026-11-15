@@ -29,6 +29,12 @@ Each has a fallback in [ADR-002](decisions/ADR-002-gnss-sdr-recipe.md) or [ADR-0
 | B7 | `networkmanager-wifi`, `networkmanager-nmcli` package names; removing `networkd` from systemd | Read from the recipes; not built |
 | B8 | Licence checksum (`LIC_FILES_CHKSUM`) of `arduino-router`, `armadillo`, `matio`, the Python bridge | Computed from the files at the pinned commits; BitBake will confirm |
 
+## Found while building
+
+| # | Problem | Cause | Fix | Guard |
+|---|---|---|---|---|
+| B9 | `bitbake -p` failed: 17 errors in `meta-sdr/.../gnuradio4-studio_git.bb` and `gnuradio4-incubator_git.bb`, `LICENSE value "... AND ..." has an invalid format` (2026-11-15, [log](logs/build-20261115/parse-B02.txt)) | `meta-sdr`'s `master`, the only branch declaring `wrynose`, carries the GNU Radio 4 stack, developed against the next OE-Core series; these two recipes write `LICENSE` as an SPDX expression, which wrynose's BitBake rejects at parse time | `BBMASK` of the GNU Radio 4 recipes and images in `meta-gnss-uno-q/conf/layer.conf`; the image uses GNU Radio 3.x only. Pin unchanged | `tests/test-recipe-metadata.sh` fails if a meta-sdr recipe with an SPDX `LICENSE` is not masked (checked against the real checkout: passes, and fails when a mask is removed) |
+
 ## Expected to need attention on hardware
 
 | # | Risk | Detail |

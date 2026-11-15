@@ -1,0 +1,40 @@
+# B02 - bitbake -p with kas/uno-q-gnss-sdr.yml, build host Ubuntu 24.04 x86_64, kas-container 5.5
+# Run 1 (parse-20261115T172312Z.log): failed. Run 2 (parse-20261115T172632Z.log): passed after masking meta-sdr GNU Radio 4 recipes in meta-gnss-uno-q/conf/layer.conf.
+# Trimmed: kas checkout lines and repeated identical errors removed.
+
+## Run 1
+2026-11-15 18:25:03 - ERROR    - Command "/bin/bash -c 'bitbake -p && bitbake-layers show-layers'" failed with error 1
+2026-11-15 18:25:03 - ERROR    - Shell returned non-zero exit status
+ERROR: Parsing halted due to errors, see error messages above
+ERROR: /work/build/../meta-sdr/recipes-applications/gnuradio4-studio/gnuradio4-studio_git.bb: Fatal QA errors were found, failing task.
+ERROR: /work/build/../meta-sdr/recipes-applications/gnuradio4-studio/gnuradio4-studio_git.bb: QA Issue: gnuradio4-studio: LICENSE value "0BSD AND Apache-2.0 AND BSD-3-Clause AND CC-BY-4.0 AND GPL-3.0-only AND ISC AND MIT" has an invalid format - license names must be separated by the following characters to indicate the license selection: &|()  [license-format]
+ERROR: /work/build/../meta-sdr/recipes-core/gnuradio4/gnuradio4-incubator_git.bb: Fatal QA errors were found, failing task.
+ERROR: /work/build/../meta-sdr/recipes-core/gnuradio4/gnuradio4-incubator_git.bb: QA Issue: gnuradio4-incubator: LICENSE value "GPL-3.0-only AND MIT" has an invalid format - license names must be separated by the following characters to indicate the license selection: &|()  [license-format]
+Parsing recipes...ERROR: /work/build/../meta-sdr/recipes-applications/gnuradio4-studio/gnuradio4-studio_git.bb: QA Issue: gnuradio4-studio: LICENSE value "0BSD AND Apache-2.0 AND BSD-3-Clause AND CC-BY-4.0 AND GPL-3.0-only AND ISC AND MIT" has an invalid format - license names must be separated by the following characters to indicate the license selection: &|()  [license-format]
+Summary: There were 17 ERROR messages, returning a non-zero exit code.
+Summary: There was 1 WARNING message.
+Summary: There were 17 ERROR messages, returning a non-zero exit code.
+
+## Run 2
+Parsing recipes...WARNING: /work/build/../meta-qcom/recipes-kernel/linux/linux-qcom-next-rt_git.bb: Cannot resolve the kernel source revision: Fetcher failure: Recipe uses a floating tag/branch 'qcom-next' for repo 'github.com/qualcomm-linux/kernel.git' without a fixed SRCREV yet doesn't call bb.fetch2.get_srcrev() (use SRCPV in PV for OE).
+WARNING: /work/build/../meta-qcom/recipes-kernel/linux/linux-qcom-next_git.bb: Cannot resolve the kernel source revision: Fetcher failure: Recipe uses a floating tag/branch 'qcom-next' for repo 'github.com/qualcomm-linux/kernel.git' without a fixed SRCREV yet doesn't call bb.fetch2.get_srcrev() (use SRCPV in PV for OE).
+WARNING: /work/build/../meta-qcom/recipes-kernel/linux/linux-qcom-rt_6.18.bb: Cannot resolve the kernel source revision: Fetcher failure: Recipe uses a floating tag/branch 'qcom-6.18.y' for repo 'github.com/qualcomm-linux/kernel.git' without a fixed SRCREV yet doesn't call bb.fetch2.get_srcrev() (use SRCPV in PV for OE).
+WARNING: /work/build/../meta-qcom/recipes-kernel/linux/linux-qcom_6.18.bb: Cannot resolve the kernel source revision: Fetcher failure: Recipe uses a floating tag/branch 'qcom-6.18.y' for repo 'github.com/qualcomm-linux/kernel.git' without a fixed SRCREV yet doesn't call bb.fetch2.get_srcrev() (use SRCPV in PV for OE).
+WARNING: /work/build/../../repo/meta-gnss-uno-q/recipes-core/images/gnss-uno-q-image.bb: gnss-uno-q-image: no /repo/local/authorized_keys and no debug login: nobody will be able to log in to this image. Provide the SSH public key, or build with kas/include/debug.yml.
+Parsing of 3191 .bb files complete (0 cached, 3191 parsed). 5480 targets, 389 skipped, 8 masked, 0 errors.
+Summary: There were 5 WARNING messages.
+layer                 path                                                                    priority
+========================================================================================================
+gnss-uno-q            /work/build/../../repo/meta-gnss-uno-q                                  10
+lts-linux-firmware-mixin  /work/build/../meta-lts-mixins                                          5
+filesystems-layer     /work/build/../meta-openembedded/meta-filesystems                       5
+networking-layer      /work/build/../meta-openembedded/meta-networking                        5
+openembedded-layer    /work/build/../meta-openembedded/meta-oe                                5
+meta-python           /work/build/../meta-openembedded/meta-python                            5
+qcom                  /work/build/../meta-qcom                                                6
+qcom-arduino          /work/build/../meta-qcom-arduino                                        5
+sdr-layer             /work/build/../meta-sdr                                                 5
+core                  /work/build/../oe-core/meta                                             5
+
+Note: the four kernel warnings come from the recipes' devupstream/-next variants, which follow a branch on purpose and are not built.
+The kernel that is built, linux-qcom 6.18.52, is pinned in linux-qcom_6.18.bb: SRCREV 4b7f69a1ee2e59e0206ed610734d40c2c9521bcc, nobranch=1.
