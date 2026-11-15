@@ -1,0 +1,1 @@
+$ find ~ / -xdev \( -name "*.dat" -o -name "*.bin" -o -name "*.raw" \) -size +50M -printf "%s bytes  %p\n" 2>/dev/null | head -n 40

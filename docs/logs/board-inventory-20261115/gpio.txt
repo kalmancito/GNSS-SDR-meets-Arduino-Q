@@ -1,0 +1,164 @@
+$ gpiodetect 2>&1; echo; gpioinfo 2>&1 | head -n 300
+gpiochip0 [1c40000.spmi:pmic@0:gpio@c000] (10 lines)
+gpiochip1 [500000.pinctrl] (127 lines)
+gpiochip2 [a7c0000.pinctrl] (19 lines)
+
+gpiochip0 - 10 lines:
+	line   0:	unnamed         	input
+	line   1:	unnamed         	input
+	line   2:	unnamed         	input
+	line   3:	unnamed         	input
+	line   4:	unnamed         	input
+	line   5:	unnamed         	input
+	line   6:	unnamed         	input
+	line   7:	unnamed         	input
+	line   8:	unnamed         	input
+	line   9:	unnamed         	input
+gpiochip1 - 127 lines:
+	line   0:	unnamed         	input
+	line   1:	unnamed         	input
+	line   2:	unnamed         	input
+	line   3:	unnamed         	input
+	line   4:	unnamed         	input
+	line   5:	unnamed         	input
+	line   6:	unnamed         	input
+	line   7:	unnamed         	input
+	line   8:	unnamed         	input
+	line   9:	unnamed         	input
+	line  10:	unnamed         	input
+	line  11:	unnamed         	input
+	line  12:	unnamed         	input
+	line  13:	unnamed         	input
+	line  14:	unnamed         	input
+	line  15:	unnamed         	input
+	line  16:	unnamed         	input
+	line  17:	unnamed         	input
+	line  18:	unnamed         	input
+	line  19:	unnamed         	input
+	line  20:	unnamed         	input
+	line  21:	unnamed         	input
+	line  22:	unnamed         	input
+	line  23:	unnamed         	input
+	line  24:	unnamed         	input
+	line  25:	unnamed         	output
+	line  26:	unnamed         	output
+	line  27:	unnamed         	input
+	line  28:	unnamed         	input
+	line  29:	unnamed         	input
+	line  30:	unnamed         	input
+	line  31:	unnamed         	input
+	line  32:	unnamed         	input
+	line  33:	unnamed         	input
+	line  34:	unnamed         	input
+	line  35:	unnamed         	input
+	line  36:	unnamed         	input active-low consumer=Volume Down
+	line  37:	unnamed         	output
+	line  38:	unnamed         	output
+	line  39:	unnamed         	output consumer=red:panic
+	line  40:	unnamed         	output consumer=green:wlan
+	line  41:	unnamed         	output consumer=red:user
+	line  42:	unnamed         	output consumer=green:user
+	line  43:	unnamed         	input
+	line  44:	unnamed         	input
+	line  45:	unnamed         	input
+	line  46:	unnamed         	input
+	line  47:	unnamed         	output consumer=blue:bt
+	line  48:	unnamed         	input
+	line  49:	unnamed         	input
+	line  50:	unnamed         	input
+	line  51:	unnamed         	input
+	line  52:	unnamed         	input
+	line  53:	unnamed         	input
+	line  54:	unnamed         	input
+	line  55:	unnamed         	input
+	line  56:	unnamed         	input
+	line  57:	unnamed         	input
+	line  58:	unnamed         	input
+	line  59:	unnamed         	input
+	line  60:	unnamed         	output consumer=blue:user
+	line  61:	unnamed         	input
+	line  62:	unnamed         	input
+	line  63:	unnamed         	input
+	line  64:	unnamed         	input
+	line  65:	unnamed         	input
+	line  66:	unnamed         	input
+	line  67:	unnamed         	input
+	line  68:	unnamed         	input
+	line  69:	unnamed         	input
+	line  70:	unnamed         	output
+	line  71:	unnamed         	output
+	line  72:	unnamed         	input
+	line  73:	unnamed         	input
+	line  74:	unnamed         	input
+	line  75:	unnamed         	input
+	line  76:	unnamed         	input
+	line  77:	unnamed         	input
+	line  78:	unnamed         	input
+	line  79:	unnamed         	input
+	line  80:	unnamed         	input
+	line  81:	unnamed         	input
+	line  82:	unnamed         	input
+	line  83:	unnamed         	input
+	line  84:	unnamed         	input
+	line  85:	unnamed         	input
+	line  86:	unnamed         	input
+	line  87:	unnamed         	output consumer=enable
+	line  88:	unnamed         	input
+	line  89:	unnamed         	input
+	line  90:	unnamed         	input
+	line  91:	unnamed         	input
+	line  92:	unnamed         	input
+	line  93:	unnamed         	input
+	line  94:	unnamed         	input
+	line  95:	unnamed         	input
+	line  96:	unnamed         	input active-low consumer=Volume Up
+	line  97:	unnamed         	input
+	line  98:	unnamed         	input
+	line  99:	unnamed         	input
+	line 100:	unnamed         	input
+	line 101:	unnamed         	input
+	line 102:	unnamed         	input
+	line 103:	unnamed         	input
+	line 104:	unnamed         	input
+	line 105:	unnamed         	input
+	line 106:	unnamed         	input
+	line 107:	unnamed         	input
+	line 108:	unnamed         	input
+	line 109:	unnamed         	input
+	line 110:	unnamed         	input
+	line 111:	unnamed         	input
+	line 112:	unnamed         	input
+	line 113:	unnamed         	input
+	line 114:	unnamed         	input
+	line 115:	unnamed         	input
+	line 116:	unnamed         	input
+	line 117:	unnamed         	input
+	line 118:	unnamed         	input
+	line 119:	unnamed         	input
+	line 120:	unnamed         	input
+	line 121:	unnamed         	input
+	line 122:	unnamed         	input
+	line 123:	unnamed         	input
+	line 124:	unnamed         	input
+	line 125:	unnamed         	input
+	line 126:	unnamed         	input
+gpiochip2 - 19 lines:
+	line   0:	unnamed         	input
+	line   1:	unnamed         	input
+	line   2:	unnamed         	input
+	line   3:	unnamed         	input
+	line   4:	unnamed         	input
+	line   5:	unnamed         	input
+	line   6:	unnamed         	input
+	line   7:	unnamed         	input
+	line   8:	unnamed         	input
+	line   9:	unnamed         	input
+	line  10:	unnamed         	input
+	line  11:	unnamed         	input
+	line  12:	unnamed         	input
+	line  13:	unnamed         	input
+	line  14:	unnamed         	input
+	line  15:	unnamed         	input
+	line  16:	unnamed         	input
+	line  17:	unnamed         	input
+	line  18:	unnamed         	input

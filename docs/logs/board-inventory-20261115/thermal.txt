@@ -1,0 +1,11 @@
+$ for z in /sys/class/thermal/thermal_zone*; do echo "$(cat $z/type 2>/dev/null) $(cat $z/temp 2>/dev/null)"; done
+mapss-thermal 33000
+video-thermal 32600
+wlan-thermal 33300
+cpuss0-thermal 33600
+cpuss1-thermal 34200
+mdm0-thermal 32600
+mdm1-thermal 33000
+gpu-thermal 32600
+hm-center-thermal 34200
+camera-thermal 33000

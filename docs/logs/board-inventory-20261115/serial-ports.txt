@@ -1,0 +1,5 @@
+$ ls -l /dev/ttyHS* /dev/ttyMSM* /dev/ttyGS* 2>&1
+ls: cannot access '/dev/ttyGS*': No such file or directory
+crw-rw---- 1 root dialout 239, 1 Nov 15 17:03 /dev/ttyHS1
+crw-rw---- 1 root dialout 240, 0 Nov 15 01:19 /dev/ttyMSM0
+[exit status 2]

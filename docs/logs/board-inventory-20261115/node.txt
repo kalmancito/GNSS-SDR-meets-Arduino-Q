@@ -1,0 +1,10 @@
+$ command -v node && node --version; ls ~ 2>&1 | head -n 40
+/usr/bin/node
+v20.19.2
+ArduinoApps
+arrayanes
+gnss-sdr
+gnss-sdr-webmonitor
+lost+found
+protobuf_gnss_sdr
+test_jeju

@@ -1,0 +1,81 @@
+$ dmesg 2>/dev/null | tail -n 80 || journalctl -k -n 80 --no-pager
+[   14.655920] Bluetooth: BNEP socket layer initialized
+[   14.675407] Bluetooth: MGMT ver 1.23
+[   14.723006] NET: Registered PF_ALG protocol family
+[   14.790187] Bluetooth: RFCOMM socket layer initialized
+[   14.798700] Bluetooth: RFCOMM ver 1.11
+[   15.439830] ath10k_snoc c800000.wifi: qmi chip_id 0x140 chip_family 0x4002 board_id 0xff soc_id 0x40670000
+[   15.449651] ath10k_snoc c800000.wifi: qmi fw_version 0x337703a3 fw_build_timestamp 2023-10-14 01:26 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HL.3.3.7.c2-00931-QCAHLSWMTPLZ-1
+[   18.852606] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[   18.869810] Bridge firewalling registered
+[   18.926960] systemd-journald[254]: File /var/log/journal/<machine-id>/user-1000.journal corrupted or uncleanly shut down, renaming and replacing.
+[   19.775790] ath10k_snoc c800000.wifi: wcn3990 hw1.0 target 0x00000008 chip_id 0x00000000 sub 0000:0000
+[   19.785491] ath10k_snoc c800000.wifi: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
+[   19.796363] ath10k_snoc c800000.wifi: firmware ver  api 5 features wowlan,mgmt-tx-by-reference,non-bmi,single-chan-info-per-channel crc32 a79c5b24
+[   19.836561] ath10k_snoc c800000.wifi: htt-ver 3.128 wmi-op 4 htt-op 3 cal file max-sta 32 raw 0 hwcrypto 1
+[   19.938349] ath: EEPROM regdomain: 0x406c
+[   19.938370] ath: EEPROM indicates we should expect a direct regpair map
+[   19.938378] ath: Country alpha2 being used: 00
+[   19.938381] ath: Regpair used: 0x6c
+[   23.877698] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[   23.888685] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[   23.937903] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[   23.965502] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[   23.982077] q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: Found Matching Copp 0x0
+[   24.019273] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[   24.060261]  MultiMedia1: ASoC: no backend DAIs enabled for MultiMedia1, possibly missing ALSA mixer-based routing or UCM profile
+[   24.076693] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[   24.124181] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 53760 period 8 period_sz 3360 vs 6720 rate 48000 ch 1
+[   24.469983] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[   24.557014] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[   24.567205] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[   26.379866] wlan0: authenticate with XX:XX:XX:XX:XX:XX (local address=XX:XX:XX:XX:XX:XX)
+[   26.388174] wlan0: send auth to XX:XX:XX:XX:XX:XX (try 1/3)
+[   26.396776] wlan0: authenticated
+[   26.404521] wlan0: associate with XX:XX:XX:XX:XX:XX (try 1/3)
+[   26.412811] wlan0: RX AssocResp from XX:XX:XX:XX:XX:XX (capab=0x1011 status=0 aid=16)
+[   26.496948] wlan0: associated
+[   26.500642] wlan0: Limiting TX power to 30 (30 - 0) dBm as advertised by XX:XX:XX:XX:XX:XX
+[   33.764538] l5: disabling
+[   33.772489] l16: disabling
+[   33.775568] usb_vbus: disabling
+[   59.888438] br-aca234f8d7a6: port 1(veth6d2cccd) entered blocking state
+[   59.895300] br-aca234f8d7a6: port 1(veth6d2cccd) entered disabled state
+[   59.902153] veth6d2cccd: entered allmulticast mode
+[   59.907397] veth6d2cccd: entered promiscuous mode
+[   60.607741] eth0: renamed from veth7d1cb54
+[   60.619609] br-aca234f8d7a6: port 1(veth6d2cccd) entered blocking state
+[   60.626323] br-aca234f8d7a6: port 1(veth6d2cccd) entered forwarding state
+[  279.850690] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  279.862537] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  279.914415] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  279.944327] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  279.961527] q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: Found Matching Copp 0x0
+[  280.009142] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[  280.061410] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[  280.112913] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 53760 period 8 period_sz 3360 vs 6720 rate 48000 ch 1
+[  280.264636] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  280.308176] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  280.319889] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  296.301091] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  296.312199] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  296.365719] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  296.394904] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  296.411971] q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: Found Matching Copp 0x0
+[  296.455884] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[  296.505051] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[  296.557425] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 53760 period 8 period_sz 3360 vs 6720 rate 48000 ch 1
+[  296.744327] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  296.790879] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  296.801683] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  313.069299] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  313.081173] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  313.131136] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  313.160192] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 19200 period 2 period_sz 2400 vs 9600 rate 48000 ch 2
+[  313.177160] q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: Found Matching Copp 0x0
+[  313.219909] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[  313.268426] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 491520 period 8 period_sz 1920 vs 61440 rate 48000 ch 8
+[  313.318326] q6asm-dai ab00000.remoteproc:glink-edge:apr:service@7:dais: DEBUG: q6asm_dai_prepare: pcm size 53760 period 8 period_sz 3360 vs 6720 rate 48000 ch 1
+[  313.492767] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  313.655389] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+[  313.666371] hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0

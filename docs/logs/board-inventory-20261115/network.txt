@@ -1,0 +1,12 @@
+$ ip -brief addr 2>/dev/null || ip addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+br-8c6e71a13dab  DOWN           172.21.0.1/16 
+br-aca234f8d7a6  UP             172.23.0.1/16 fe80::42:29ff:fe3f:d754/64 
+br-bcaf42f122c0  DOWN           172.24.0.1/16 
+br-d2c0442bc283  DOWN           172.18.0.1/16 
+br-df0156e3823b  DOWN           172.22.0.1/16 
+wlan0            UP             192.168.50.176/24 192.168.50.177/24 fe80::29a6:ccde:680d:3ba/64 
+br-e68cec0913d5  DOWN           172.20.0.1/16 
+docker0          DOWN           172.17.0.1/16 
+br-5427be1842a4  DOWN           172.19.0.1/16 
+veth6d2cccd@if11 UP             fe80::e8ce:4aff:fed9:c619/64 

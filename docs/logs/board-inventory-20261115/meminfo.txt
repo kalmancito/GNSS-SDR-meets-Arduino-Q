@@ -1,0 +1,12 @@
+$ head -n 8 /proc/meminfo; free -m
+MemTotal:        1782420 kB
+MemFree:          369800 kB
+MemAvailable:    1106292 kB
+Buffers:           38028 kB
+Cached:           779408 kB
+SwapCached:            0 kB
+Active:           193728 kB
+Inactive:        1022148 kB
+               total        used        free      shared  buff/cache   available
+Mem:            1740         660         360          38         839        1079
+Swap:            870           0         870

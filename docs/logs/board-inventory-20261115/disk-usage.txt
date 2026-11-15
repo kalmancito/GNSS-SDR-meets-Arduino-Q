@@ -1,0 +1,16 @@
+$ df -h
+Filesystem       Size  Used Avail Use% Mounted on
+udev             842M     0  842M   0% /dev
+tmpfs            175M  1.9M  173M   2% /run
+/dev/mmcblk0p68  9.8G  8.8G  532M  95% /
+tmpfs            871M   12K  871M   1% /dev/shm
+efivarfs         128K  2.2K  126K   2% /sys/firmware/efi/efivars
+tmpfs            5.0M  8.0K  5.0M   1% /run/lock
+tmpfs            871M   64K  871M   1% /tmp
+tmpfs            1.0M     0  1.0M   0% /run/credentials/systemd-journald.service
+/dev/mmcblk0p67  488M  119M  369M  25% /boot/efi
+/dev/mmcblk0p69  3.6G 1012M  2.5G  29% /home/arduino
+tmpfs            175M   48K  175M   1% /run/user/103
+tmpfs            1.0M     0  1.0M   0% /run/credentials/getty@tty1.service
+tmpfs            1.0M     0  1.0M   0% /run/credentials/serial-getty@ttyMSM0.service
+tmpfs            175M   44K  175M   1% /run/user/1000

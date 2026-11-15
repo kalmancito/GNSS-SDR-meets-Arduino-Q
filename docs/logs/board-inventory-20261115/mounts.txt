@@ -1,0 +1,30 @@
+$ findmnt -A 2>/dev/null || mount
+TARGET                                                                                             SOURCE                 FSTYPE     OPTIONS
+/                                                                                                  /dev/mmcblk0p68        ext4       rw,relatime
+├─/sys                                                                                             sysfs                  sysfs      rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/kernel/security                                                                           securityfs             securityfs rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/cgroup                                                                                 cgroup2                cgroup2    rw,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot
+│ ├─/sys/fs/pstore                                                                                 none                   pstore     rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/firmware/efi/efivars                                                                      efivarfs               efivarfs   ro,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/bpf                                                                                    bpf                    bpf        rw,nosuid,nodev,noexec,relatime,mode=700
+│ ├─/sys/kernel/debug                                                                              debugfs                debugfs    rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/fuse/connections                                                                       fusectl                fusectl    rw,nosuid,nodev,noexec,relatime
+│ └─/sys/kernel/config                                                                             configfs               configfs   rw,nosuid,nodev,noexec,relatime
+├─/proc                                                                                            proc                   proc       rw,nosuid,nodev,noexec,relatime
+├─/dev                                                                                             udev                   devtmpfs   rw,nosuid,relatime,size=862120k,nr_inodes=215530,mode=755
+│ ├─/dev/pts                                                                                       devpts                 devpts     rw,nosuid,noexec,relatime,gid=5,mode=600,ptmxmode=000
+│ ├─/dev/shm                                                                                       tmpfs                  tmpfs      rw,nosuid,nodev
+│ ├─/dev/hugepages                                                                                 hugetlbfs              hugetlbfs  rw,nosuid,nodev,relatime,pagesize=2M
+│ └─/dev/mqueue                                                                                    mqueue                 mqueue     rw,nosuid,nodev,noexec,relatime
+├─/run                                                                                             tmpfs                  tmpfs      rw,nosuid,nodev,noexec,relatime,size=178244k,mode=755
+│ ├─/run/lock                                                                                      tmpfs                  tmpfs      rw,nosuid,nodev,noexec,relatime,size=5120k
+│ ├─/run/credentials/systemd-journald.service                                                      tmpfs                  tmpfs      ro,nosuid,nodev,noexec,relatime,nosymfollow,size=1024k,nr_inodes=1024,mode=700,noswap
+│ ├─/run/user/103                                                                                  tmpfs                  tmpfs      rw,nosuid,nodev,relatime,size=178240k,nr_inodes=44560,mode=700,uid=103,gid=109
+│ ├─/run/user/1000                                                                                 tmpfs                  tmpfs      rw,nosuid,nodev,relatime,size=178240k,nr_inodes=44560,mode=700,uid=1000,gid=1000
+│ ├─/run/credentials/getty@tty1.service                                                            tmpfs                  tmpfs      ro,nosuid,nodev,noexec,relatime,nosymfollow,size=1024k,nr_inodes=1024,mode=700,noswap
+│ ├─/run/credentials/serial-getty@ttyMSM0.service                                                  tmpfs                  tmpfs      ro,nosuid,nodev,noexec,relatime,nosymfollow,size=<masked>,nr_inodes=1024,mode=700,noswap
+│ └─/run/docker/netns/0507c704b190                                                                 nsfs[net:[4026533018]] nsfs       rw
+├─/tmp                                                                                             tmpfs                  tmpfs      rw,nosuid,nodev,size=891212k,nr_inodes=1048576
+├─/boot/efi                                                                                        /dev/mmcblk0p67        vfat       rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro
+├─/home/arduino                                                                                    /dev/mmcblk0p69        ext4       rw,relatime
+└─/var/lib/docker/overlay2/c4aa40171043276e41623d44510dd66cc5c19faf498230bab2d6a64db4070912/merged overlay                overlay    rw,relatime,lowerdir=/var/lib/docker/overlay2/l/LU7NKOMWRLAJF3OBRORAXCJJHV:/var/lib/docker/overlay2/l/3Q4DWJECJDRRWOL64GWGTD34LI:/var/lib/docker/overlay2/l/3LEMYSPZCZK7EG3USZPYYQCKAS:/var/lib/docker/overlay2/l/QHZY2PFQYPUXCSNGVKQQO6KZ3B:/var/lib/docker/overlay2/l/NXPQ6XI3GLILM7RHJ47BAWOE44:/var/lib/docker/overlay2/l/TMCYH7JMFZ6HTMTDI6RXSBPMJC:/var/lib/docker/overlay2/l/7SIZGK2Q36DGNIKAM2RKBG3G5Q:/var/lib/docker/overlay2/l/KBB7XYDPLVUL2STPBFOYZJ75ZO:/var/lib/docker/overlay2/l/3PCG7XZO6C32UPNBIG46JKKI4Q:/var/lib/docker/overlay2/l/FKQTA4YC66DJ4QTN2NGLSDJYJQ:/var/lib/docker/overlay2/l/5WLPLWNLLQOKLIG2NWTVJFEXFP:/var/lib/docker/overlay2/l/2LD5G5L7WXNWGW2IJ46YE3JEVB:/var/lib/docker/overlay2/l/H3TJTZATO637RG4DKIY2QIMRGD:/var/lib/docker/overlay2/l/DOWFT3A5JVZPAQT6MWCXB6CIOF,upperdir=/var/lib/docker/overlay2/c4aa40171043276e41623d44510dd66cc5c19faf498230bab2d6a64db4070912/diff,workdir=/var/lib/docker/overlay2/c4aa40171043276e41623d44510dd66cc5c19faf498230bab2d6a64db4070912/work

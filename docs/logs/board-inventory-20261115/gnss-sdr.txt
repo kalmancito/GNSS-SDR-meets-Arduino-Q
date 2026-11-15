@@ -1,0 +1,32 @@
+$ command -v gnss-sdr && gnss-sdr --version 2>&1; echo; ls -la ~/gnss-sdr 2>&1 | head -n 40
+/usr/local/bin/gnss-sdr
+gnss-sdr version 0.0.20
+
+total 448
+drwxrwxr-x 15 arduino arduino   4096 Nov  8  2025 .
+drwxr-xr-x 19 arduino arduino   4096 Nov 15 17:03 ..
+-rw-rw-r--  1 arduino arduino   4086 Oct 30  2025 AUTHORS
+drwxrwxr-x  8 arduino arduino   4096 Nov  8  2025 build
+-rw-rw-r--  1 arduino arduino  10790 Oct 30  2025 CITATION.cff
+-rw-rw-r--  1 arduino arduino   8192 Oct 30  2025 .clang-format
+-rw-rw-r--  1 arduino arduino  17277 Oct 30  2025 .clang-tidy
+drwxrwxr-x  4 arduino arduino   4096 Oct 30  2025 cmake
+-rw-rw-r--  1 arduino arduino 187801 Oct 30  2025 CMakeLists.txt
+-rw-rw-r--  1 arduino arduino   5704 Oct 30  2025 CODE_OF_CONDUCT.md
+drwxrwxr-x  6 arduino arduino   4096 Nov 26  2025 conf
+-rw-rw-r--  1 arduino arduino   8434 Oct 30  2025 CONTRIBUTING.md
+-rw-rw-r--  1 arduino arduino  35825 Oct 30  2025 COPYING
+drwxrwxr-x  2 arduino arduino   4096 Nov  8  2025 data
+drwxrwxr-x  6 arduino arduino   4096 Oct 30  2025 docs
+drwxrwxr-x  8 arduino arduino   4096 Oct 30  2025 .git
+drwxrwxr-x  3 arduino arduino   4096 Oct 30  2025 .github
+-rw-rw-r--  1 arduino arduino    485 Oct 30  2025 .gitignore
+drwxr-xr-x  5 root    root      4096 Nov  8  2025 gnss-products
+drwxrwxr-x  2 arduino arduino   4096 Nov  8  2025 install
+-rw-rw-r--  1 arduino arduino      0 Nov  8  2025 jeju.log
+-rw-rw-r--  1 arduino arduino   5883 Nov  8  2025 jeju_monitor.log
+drwxrwxr-x  2 arduino arduino   4096 Oct 30  2025 LICENSES
+-rw-rw-r--  1 arduino arduino  92320 Oct 30  2025 README.md
+drwxrwxr-x  5 arduino arduino   4096 Oct 30  2025 src
+drwxrwxr-x  7 arduino arduino   4096 Oct 30  2025 tests
+drwxrwxr-x 11 arduino arduino   4096 Oct 30  2025 utils

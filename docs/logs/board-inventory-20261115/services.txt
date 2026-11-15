@@ -1,0 +1,42 @@
+$ systemctl list-units --type=service --state=running --no-pager; echo; systemctl --failed --no-pager
+  UNIT                         LOAD   ACTIVE SUB     DESCRIPTION
+  accounts-daemon.service      loaded active running Accounts Service
+  adbd.service                 loaded active running Android Debug Bridge (ADB) daemon
+  arduino-app-cli.service      loaded active running Arduino App CLI daemon Service
+  arduino-router.service       loaded active running Arduino Router Service
+  avahi-daemon.service         loaded active running Avahi mDNS/DNS-SD Stack
+  bluetooth.service            loaded active running Bluetooth service
+  containerd.service           loaded active running containerd container runtime
+  cron.service                 loaded active running Regular background program processing daemon
+  dbus.service                 loaded active running D-Bus System Message Bus
+  docker.service               loaded active running Docker Application Container Engine
+  getty@tty1.service           loaded active running Getty on tty1
+  gnss-monitor-web.service     loaded active running GNSS-SDR Web Monitor (Node.js)
+  ipbot.service                loaded active running Telegram Public IP Bot
+  lightdm.service              loaded active running Light Display Manager
+  ModemManager.service         loaded active running Modem Manager
+  NetworkManager.service       loaded active running Network Manager
+  polkit.service               loaded active running Authorization Manager
+  rmtfs.service                loaded active running Qualcomm remotefs service
+  rtkit-daemon.service         loaded active running RealtimeKit Scheduling Policy Service
+  serial-getty@ttyMSM0.service loaded active running Serial Getty on ttyMSM0
+  ssh.service                  loaded active running OpenBSD Secure Shell server
+  systemd-journald.service     loaded active running Journal Service
+  systemd-logind.service       loaded active running User Login Management
+  systemd-timesyncd.service    loaded active running Network Time Synchronization
+  systemd-udevd.service        loaded active running Rule-based Manager for Device Events and Files
+  tqftpserv.service            loaded active running QRTR TFTP service
+  udisks2.service              loaded active running Disk Manager
+  user@1000.service            loaded active running User Manager for UID 1000
+  user@103.service             loaded active running User Manager for UID 103
+  wpa_supplicant.service       loaded active running WPA supplicant
+
+Legend: LOAD   → Reflects whether the unit definition was properly loaded.
+        ACTIVE → The high-level unit activation state, i.e. generalization of SUB.
+        SUB    → The low-level unit activation state, values depend on unit type.
+
+30 loaded units listed.
+
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.

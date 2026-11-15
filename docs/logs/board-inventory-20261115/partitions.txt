@@ -1,0 +1,155 @@
+$ ls -l /dev/disk/by-partlabel/ 2>/dev/null; cat /proc/partitions
+total 0
+lrwxrwxrwx 1 root root 16 Jan  1  1970 abl_a -> ../../mmcblk0p24
+lrwxrwxrwx 1 root root 16 Jan  1  1970 abl_b -> ../../mmcblk0p25
+lrwxrwxrwx 1 root root 16 Jan  1  1970 apdp -> ../../mmcblk0p47
+lrwxrwxrwx 1 root root 20 Jan  1  1970 bdaddr -> ../../mmcblk0boot0p1
+lrwxrwxrwx 1 root root 16 Jan  1  1970 boot_a -> ../../mmcblk0p11
+lrwxrwxrwx 1 root root 16 Jan  1  1970 boot_b -> ../../mmcblk0p12
+lrwxrwxrwx 1 root root 16 Jan  1  1970 catecontentfv -> ../../mmcblk0p61
+lrwxrwxrwx 1 root root 16 Jan  1  1970 catefv -> ../../mmcblk0p60
+lrwxrwxrwx 1 root root 16 Jan  1  1970 cateloader -> ../../mmcblk0p53
+lrwxrwxrwx 1 root root 20 Jan  1  1970 CDT -> ../../mmcblk0boot1p1
+lrwxrwxrwx 1 root root 16 Jan  1  1970 ddr_a -> ../../mmcblk0p26
+lrwxrwxrwx 1 root root 16 Jan  1  1970 ddr_b -> ../../mmcblk0p27
+lrwxrwxrwx 1 root root 16 Jan  1  1970 devcfg_a -> ../../mmcblk0p37
+lrwxrwxrwx 1 root root 16 Jan  1  1970 devcfg_b -> ../../mmcblk0p38
+lrwxrwxrwx 1 root root 16 Jan  1  1970 devinfo -> ../../mmcblk0p45
+lrwxrwxrwx 1 root root 16 Jan  1  1970 dip -> ../../mmcblk0p46
+lrwxrwxrwx 1 root root 16 Jan  1  1970 efi -> ../../mmcblk0p67
+lrwxrwxrwx 1 root root 16 Jan  1  1970 featenabler_a -> ../../mmcblk0p39
+lrwxrwxrwx 1 root root 16 Jan  1  1970 featenabler_b -> ../../mmcblk0p40
+lrwxrwxrwx 1 root root 16 Jan  1  1970 frp -> ../../mmcblk0p43
+lrwxrwxrwx 1 root root 16 Jan  1  1970 fsc -> ../../mmcblk0p66
+lrwxrwxrwx 1 root root 16 Jan  1  1970 fsg -> ../../mmcblk0p65
+lrwxrwxrwx 1 root root 15 Jan  1  1970 hyp_a -> ../../mmcblk0p9
+lrwxrwxrwx 1 root root 16 Jan  1  1970 hyp_b -> ../../mmcblk0p10
+lrwxrwxrwx 1 root root 16 Jan  1  1970 imagefv_a -> ../../mmcblk0p29
+lrwxrwxrwx 1 root root 16 Jan  1  1970 imagefv_b -> ../../mmcblk0p30
+lrwxrwxrwx 1 root root 16 Jan  1  1970 keymaster_a -> ../../mmcblk0p18
+lrwxrwxrwx 1 root root 16 Jan  1  1970 keymaster_b -> ../../mmcblk0p19
+lrwxrwxrwx 1 root root 16 Jan  1  1970 keystore -> ../../mmcblk0p36
+lrwxrwxrwx 1 root root 20 Jan  1  1970 last_grow -> ../../mmcblk0boot1p2
+lrwxrwxrwx 1 root root 16 Jan  1  1970 limits -> ../../mmcblk0p50
+lrwxrwxrwx 1 root root 16 Jan  1  1970 logdump -> ../../mmcblk0p54
+lrwxrwxrwx 1 root root 16 Jan  1  1970 logfs -> ../../mmcblk0p52
+lrwxrwxrwx 1 root root 16 Jan  1  1970 mdtp_a -> ../../mmcblk0p22
+lrwxrwxrwx 1 root root 16 Jan  1  1970 mdtp_b -> ../../mmcblk0p23
+lrwxrwxrwx 1 root root 16 Jan  1  1970 mdtpsecapp_a -> ../../mmcblk0p20
+lrwxrwxrwx 1 root root 16 Jan  1  1970 mdtpsecapp_b -> ../../mmcblk0p21
+lrwxrwxrwx 1 root root 16 Jan  1  1970 misc -> ../../mmcblk0p34
+lrwxrwxrwx 1 root root 16 Jan  1  1970 misc_boot -> ../../mmcblk0p35
+lrwxrwxrwx 1 root root 16 Jan  1  1970 modemst1 -> ../../mmcblk0p63
+lrwxrwxrwx 1 root root 16 Jan  1  1970 modemst2 -> ../../mmcblk0p64
+lrwxrwxrwx 1 root root 16 Jan  1  1970 multiimgoem_a -> ../../mmcblk0p56
+lrwxrwxrwx 1 root root 16 Jan  1  1970 multiimgoem_b -> ../../mmcblk0p57
+lrwxrwxrwx 1 root root 16 Jan  1  1970 multiimgqti -> ../../mmcblk0p58
+lrwxrwxrwx 1 root root 16 Nov 15 01:19 persist -> ../../mmcblk0p33
+lrwxrwxrwx 1 root root 16 Jan  1  1970 qupfw_a -> ../../mmcblk0p41
+lrwxrwxrwx 1 root root 16 Jan  1  1970 qupfw_b -> ../../mmcblk0p42
+lrwxrwxrwx 1 root root 16 Jan  1  1970 rawdump -> ../../mmcblk0p44
+lrwxrwxrwx 1 root root 16 Jan  1  1970 recoveryinfo -> ../../mmcblk0p17
+lrwxrwxrwx 1 root root 16 Jan  1  1970 rootfs -> ../../mmcblk0p68
+lrwxrwxrwx 1 root root 15 Jan  1  1970 rpm_a -> ../../mmcblk0p7
+lrwxrwxrwx 1 root root 15 Jan  1  1970 rpm_b -> ../../mmcblk0p8
+lrwxrwxrwx 1 root root 16 Jan  1  1970 secdata -> ../../mmcblk0p59
+lrwxrwxrwx 1 root root 16 Jan  1  1970 splash -> ../../mmcblk0p49
+lrwxrwxrwx 1 root root 16 Jan  1  1970 spunvm -> ../../mmcblk0p48
+lrwxrwxrwx 1 root root 16 Jan  1  1970 ssd -> ../../mmcblk0p28
+lrwxrwxrwx 1 root root 16 Jan  1  1970 storsec -> ../../mmcblk0p55
+lrwxrwxrwx 1 root root 16 Jan  1  1970 toolsfv -> ../../mmcblk0p51
+lrwxrwxrwx 1 root root 15 Jan  1  1970 tz_a -> ../../mmcblk0p5
+lrwxrwxrwx 1 root root 15 Jan  1  1970 tz_b -> ../../mmcblk0p6
+lrwxrwxrwx 1 root root 16 Jan  1  1970 uefi_a -> ../../mmcblk0p13
+lrwxrwxrwx 1 root root 16 Jan  1  1970 uefi_b -> ../../mmcblk0p14
+lrwxrwxrwx 1 root root 16 Jan  1  1970 uefi_dtb_a -> ../../mmcblk0p15
+lrwxrwxrwx 1 root root 16 Jan  1  1970 uefi_dtb_b -> ../../mmcblk0p16
+lrwxrwxrwx 1 root root 16 Jan  1  1970 uefisecapp_a -> ../../mmcblk0p31
+lrwxrwxrwx 1 root root 16 Jan  1  1970 uefisecapp_b -> ../../mmcblk0p32
+lrwxrwxrwx 1 root root 16 Jan  1  1970 uefivarstore -> ../../mmcblk0p62
+lrwxrwxrwx 1 root root 16 Jan  1  1970 userdata -> ../../mmcblk0p69
+lrwxrwxrwx 1 root root 20 Jan  1  1970 wlanaddr -> ../../mmcblk0boot0p2
+lrwxrwxrwx 1 root root 15 Jan  1  1970 xbl_a -> ../../mmcblk0p1
+lrwxrwxrwx 1 root root 15 Jan  1  1970 xbl_b -> ../../mmcblk0p2
+lrwxrwxrwx 1 root root 15 Jan  1  1970 xbl_config_a -> ../../mmcblk0p3
+lrwxrwxrwx 1 root root 15 Jan  1  1970 xbl_config_b -> ../../mmcblk0p4
+major minor  #blocks  name
+
+ 253        0     891212 zram0
+ 179        0   15307776 mmcblk0
+ 179        1       3584 mmcblk0p1
+ 179        2       3584 mmcblk0p2
+ 179        3        128 mmcblk0p3
+ 179        4        128 mmcblk0p4
+ 179        5       4096 mmcblk0p5
+ 179        6       4096 mmcblk0p6
+ 179        7        512 mmcblk0p7
+ 179        8        512 mmcblk0p8
+ 179        9        512 mmcblk0p9
+ 179       10        512 mmcblk0p10
+ 179       11       4096 mmcblk0p11
+ 179       12       4096 mmcblk0p12
+ 179       13       8192 mmcblk0p13
+ 179       14       8192 mmcblk0p14
+ 179       15       1024 mmcblk0p15
+ 179       16       1024 mmcblk0p16
+ 179       17          4 mmcblk0p17
+ 179       18        512 mmcblk0p18
+ 179       19        512 mmcblk0p19
+ 179       20       4096 mmcblk0p20
+ 179       21       4096 mmcblk0p21
+ 179       22      32768 mmcblk0p22
+ 179       23      32768 mmcblk0p23
+ 179       24       1024 mmcblk0p24
+ 179       25       1024 mmcblk0p25
+ 179       26       1024 mmcblk0p26
+ 179       27       1024 mmcblk0p27
+ 179       28          8 mmcblk0p28
+ 179       29       2048 mmcblk0p29
+ 179       30       2048 mmcblk0p30
+ 179       31       2048 mmcblk0p31
+ 259        0       2048 mmcblk0p32
+ 259        1      32768 mmcblk0p33
+ 259        2       1024 mmcblk0p34
+ 259        3       1024 mmcblk0p35
+ 259        4        512 mmcblk0p36
+ 259        5        128 mmcblk0p37
+ 259        6        128 mmcblk0p38
+ 259        7        128 mmcblk0p39
+ 259        8        128 mmcblk0p40
+ 259        9         64 mmcblk0p41
+ 259       10         64 mmcblk0p42
+ 259       11        512 mmcblk0p43
+ 259       12     131072 mmcblk0p44
+ 259       13          4 mmcblk0p45
+ 259       14       1024 mmcblk0p46
+ 259       15        256 mmcblk0p47
+ 259       16       8192 mmcblk0p48
+ 259       17      33424 mmcblk0p49
+ 259       18          4 mmcblk0p50
+ 259       19       1024 mmcblk0p51
+ 259       20       8192 mmcblk0p52
+ 259       21       2048 mmcblk0p53
+ 259       22      65536 mmcblk0p54
+ 259       23        128 mmcblk0p55
+ 259       24         32 mmcblk0p56
+ 259       25         32 mmcblk0p57
+ 259       26         32 mmcblk0p58
+ 259       27         25 mmcblk0p59
+ 259       28        512 mmcblk0p60
+ 259       29       1024 mmcblk0p61
+ 259       30        512 mmcblk0p62
+ 259       31       2048 mmcblk0p63
+ 259       32       2048 mmcblk0p64
+ 259       33       2048 mmcblk0p65
+ 259       34        128 mmcblk0p66
+ 259       35     524288 mmcblk0p67
+ 259       36   10460284 mmcblk0p68
+ 259       37    3830483 mmcblk0p69
+ 179       32       4096 mmcblk0boot0
+ 179       33          4 mmcblk0boot0p1
+ 179       34          4 mmcblk0boot0p2
+ 179       35       4054 mmcblk0boot0p3
+ 179       64       4096 mmcblk0boot1
+ 179       65          2 mmcblk0boot1p1
+ 179       66       4060 mmcblk0boot1p2

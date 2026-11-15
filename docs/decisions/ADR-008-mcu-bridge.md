@@ -36,7 +36,7 @@ Package the minimum, in this layer:
 ## What has to be confirmed on hardware
 
 1. **The UART exists.** `/dev/ttyHS1` appears only if the kernel's device tree has the `serial1` alias on an enabled port. The BSP's default kernel is 6.18 with backports; the board's device tree entered mainline in 7.0. `scripts/validate-image.sh` inspects the built DTB; if the alias is missing, build with `--linux-arduino`.
-2. **The GPIO numbers.** The unit uses `gpiochip1` lines 37, 70 and 38, as upstream does on the factory kernel. Chip numbering can differ between kernels. `capture-board-info.sh` records `gpiodetect`/`gpioinfo` on the factory system for comparison. Line 70 matters most: without it the sketch never leaves the boot animation.
+2. **The GPIO numbers.** The unit uses `gpiochip1` lines 37, 70 and 38. On the factory kernel this was confirmed on 2026-11-15: `gpiochip1` is the SoC pin controller and the factory router unit (arduino-router 0.5.4) drives lines 37 and 70 the same way ([inventory](../logs/board-inventory-20261115/)). Chip numbering can still differ under the Yocto kernel: compare `gpiodetect` there. Line 70 matters most: without it the sketch never leaves the boot animation.
 3. **OpenOCD.** Arduino's image uses its own OpenOCD fork; this image uses upstream OpenOCD with the `linuxgpiod` driver and libgpiod 2. Whether that combination builds and reaches the STM32U585 is unknown. Only updating the sketch depends on it.
 4. **The sketch's boot mode.** Built with the default "wait for Linux", it needs line 70. `wait_linux_boot=no` removes that dependency if needed.
 

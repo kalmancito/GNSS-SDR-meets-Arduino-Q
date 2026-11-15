@@ -119,7 +119,7 @@ Recorded so that nobody mistakes an assumption for a fact:
 - Whether the boot firmware archive that `meta-qcom-arduino` downloads actually contains `prog_firehose_ddr.elf` (inferred from `contents.xml.in` and from Arduino's flasher; the archive was not downloaded).
 - The boot hand-off ABL -> U-Boot -> systemd-boot is inferred from the recipes.
 - Whether `linux-qcom` 6.18 at the pinned commit carries the UNO Q device tree with `uart2` enabled. The file name is referenced by the machine configuration, so it must exist; its content was not read. `scripts/validate-image.sh` checks the built DTB.
-- Which `/dev/gpiochipN` the SoC's pin controller is under the Yocto kernel, and that lines 25/26/37/38/70 mean what they mean on the factory image.
+- Which `/dev/gpiochipN` the SoC's pin controller is under the **Yocto** kernel. On the factory kernel (6.16) it was checked on 2026-11-15: `gpiochip1` = `500000.pinctrl` (127 lines), lines 25/26/37/38 configured as outputs, and the factory router unit drives 37 and 70 ([inventory](logs/board-inventory-20261115/gpio.txt)).
 - Whether upstream OpenOCD (0.12+git in meta-openembedded) drives the STM32U585 through `linuxgpiod` with libgpiod 2.x. Arduino's image uses its own OpenOCD fork.
 - Whether GNSS-SDR v0.0.22 builds against the GNU Radio `main` snapshot of `meta-sdr`.
 - The licence of the test capture on SourceForge.

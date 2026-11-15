@@ -1,0 +1,19 @@
+$ for t in arduino-app-cli arduino-cli openocd /opt/openocd/bin/openocd; do command -v $t >/dev/null 2>&1 && { echo "== $t"; $t --version 2>&1 | head -n 3; }; done; ls -la /opt/openocd 2>&1 | head -n 30
+== arduino-app-cli
+unknown flag: --version
+== arduino-cli
+Error: unknown flag: --version
+Usage:
+  arduino-cli [command]
+== /opt/openocd/bin/openocd
+Open On-Chip Debugger 0.12.0+dev-ge6a2c12f4 (2025-05-22-15:51)
+Licensed under GNU GPL v2
+For bug reports, read
+total 36
+drwxr-xr-x 4 root root 4096 Oct 24  2025 .
+drwxr-xr-x 4 root root 4096 Jan  4  2026 ..
+drwxr-xr-x 2 root root 4096 Oct 24  2025 bin
+-rw-rw-r-- 1 root root  194 Oct 24  2025 openocd_gpiod.cfg
+drwxr-xr-x 3 root root 4096 Oct 24  2025 share
+-rw-rw-r-- 1 root root 1762 Oct 24  2025 stm32u5x.cfg
+-rw-rw-r-- 1 root root 8468 Oct 24  2025 stm32x5x_common.cfg

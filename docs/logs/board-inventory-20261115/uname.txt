@@ -1,0 +1,2 @@
+$ uname -a
+Linux angy 6.16.7-g0dd6551ae96b #1 SMP PREEMPT Tue Sep 23 12:46:06 UTC 2025 aarch64 GNU/Linux

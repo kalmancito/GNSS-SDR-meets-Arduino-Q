@@ -1,0 +1,4 @@
+$ if command -v qbootctl >/dev/null 2>&1; then qbootctl 2>&1 | grep -q "must be run as root" && sudo -n qbootctl 2>&1 || qbootctl 2>&1; else echo "qbootctl not installed"; fi
+sudo: a password is required
+This program must be run as root!
+[exit status 1]
