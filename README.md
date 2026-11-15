@@ -1,173 +1,109 @@
-# GNSS-SDR real-time positioning on Arduino UNO Q  
-### with integrated GNSS-SDR Web Monitor (Node.js)
+# GNSS-SDR receiver on Arduino UNO Q
 
-This repository presents an embedded application of **GNSS-SDR** running in real time on the **Arduino UNO Q** platform. The system demonstrates GPS positioning using a compact, low-power Linux device, combined with web-based control and embedded visualization.
-
----
-
-## Overview
-
-The **Arduino UNO Q** runs a Debian-based Linux distribution, which enables native installation of **GNU Radio** and **GNSS-SDR**. The complete GNSS-SDR software stack is built directly on the target following the official GNSS-SDR build and installation instructions provided by the GNSS-SDR project.
-
-In its current configuration, the receiver supports **GPS L1 C/A only**. Multi-constellation operation (e.g., Galileo) is not yet enabled due to computational and memory constraints of the platform.
-
-The system integrates:
-
-- Real-time GNSS-SDR processing  
-- A Node.js web server for remote control  
-- A Python interface for data extraction  
-- An STM32F0 microcontroller driving an LED matrix for live visualization  
-
----
-
-## Hardware setup
-
-The hardware configuration used in this project consists of:
-
-- **Arduino UNO Q**  
-  - Linux host (Debian-based)  
-  - STM32F0 microcontroller  
-- **RTL-SDR front-end**  
-  - Nooelec NESDR SmarTee SDR  
-- **Active GNSS antenna**  
-- **LED matrix display** driven by the STM32F0 MCU  
-
-**Figure 1 – Hardware setup of the GNSS-SDR application on Arduino UNO Q**
+A software-defined GPS receiver on the **Arduino UNO Q** (Qualcomm QRB2210, 4 x Cortex-A53), built as a reproducible **Yocto** image: [GNSS-SDR](https://gnss-sdr.org) cross-compiled for AArch64, a web monitor to watch and control it, and the board's LED matrix showing the receiver status.
 
 ![Arduino UNO Q setup](images/arduino_uno_q_setup.jpg)
 
----
+> **Status (2026-11-15): the image has not been built or run yet.**
+> Everything in this repository is written and statically checked (pinned manifests, recipes, receiver profiles validated against the GNSS-SDR source, unit tests), but no BitBake build and no hardware test has been executed for the Yocto image. [docs/validation-report.md](docs/validation-report.md) lists every test with its real state (`PASS`, `FAIL` or `NOT RUN`) and the command that runs it.
+>
+> The receiver itself is proven on this board: the [original demo](docs/legacy-debian.md), built by hand on the factory Debian system, tracks 7 GPS L1 C/A channels and computes position in real time with an RTL-SDR ([video](https://youtu.be/a7ZrCYMQSxc)).
 
-## System architecture
+## What is in the image
 
-The application follows a modular architecture that separates GNSS processing, control, and visualization tasks.
-
-**Figure 2 – High-level system architecture**
-
-![System architecture](images/system_architecture.svg)
-
-Main components:
-
-- **GNSS-SDR** running on Linux, processing live RF samples  
-- **Node.js web server** for starting/stopping the receiver and selecting configurations  
-- **Python interface script** extracting GNSS-SDR outputs  
-- **STM32F0 microcontroller** receiving navigation data and driving the LED matrix  
-
----
-
-## GNSS processing configuration
-
-Real-time GNSS processing is performed using the following configuration:
-
-- **Constellation:** GPS  
-- **Signal:** GPS L1 C/A  
-- **Number of tracking channels:** 7  
-- **Coherent integration time:** 4 ms  
-- **Front-end:** RTL-SDR (live RF input)  
-
-The receiver computes standard GNSS outputs in real time, including:
-
-- GPS observables  
-- Carrier-to-noise density ratio (**C/N₀**)  
-- Position, Velocity, and Time (**PVT**) solution  
-
-Galileo signal processing is currently not enabled due to platform resource limitations.
-
----
-
-## Web-based control interface
-
-A **Node.js-based web server** runs on the Linux side of the Arduino UNO Q and provides a browser-accessible interface to control GNSS-SDR execution.
-
-The web interface allows the user to:
-
-- Start and stop the GNSS-SDR receiver  
-- Select between different GNSS-SDR configuration files  
-  - Offline / post-processing configuration  
-  - Real-time configuration using RTL-SDR  
-
-Selected GNSS-SDR outputs (observables, C/N₀, and PVT) are exposed for monitoring and downstream processing.
-
-**Figure 3 – Web interface for GNSS-SDR control**
-
-![Web interface](images/web_interface.png)
-
-### GNSS-SDR config path
-
-The Node.js server resolves GNSS-SDR config files from an environment variable first, falling back to the current user's home directory:
-
-```
-GNSS_SDR_HOME=/home/arduino/gnss-sdr
+```text
+   active GNSS antenna
+          |
+      RTL-SDR (USB) ------------ or ------------ recorded I/Q file
+          |                                            |
+   rtl_tcp (loopback)                                  |
+          +---------------------+----------------------+
+                                |
+                      GNSS-SDR  (gnss-sdr.service)
+                 GPS L1 C/A: acquisition, tracking, PVT
+                      |                         |
+        RINEX / NMEA files          protobuf monitor (UDP, loopback)
+                                                |
+                                   web monitor (Node.js, :8080)
+                              position, channels, map, statistics,
+                                 start/stop and profile selection
+                                                |
+                                     LED bridge (Python)
+                                                |
+                                  arduino-router -- UART --> STM32U585
+                                                              LED matrix
 ```
 
-If `GNSS_SDR_HOME` is not set, it defaults to `~/<user>/gnss-sdr` via the OS user home.
+| Component | Recipe | Notes |
+|---|---|---|
+| GNSS-SDR v0.0.22 | `gnss-sdr` | File and `rtl_tcp` sources by default; no UHD, ZeroMQ or GUI. |
+| Receiver profiles | `gnss-config` | `/etc/gnss-sdr/gps-l1ca-file.conf`, `gps-l1ca-live.conf` |
+| Web monitor | `gnss-web-monitor` | Sources in [apps/web-monitor](apps/web-monitor). Works without Internet (except map tiles). |
+| LED matrix bridge | `gnss-led-bridge`, `arduino-router` | Sources in [apps/led-matrix](apps/led-matrix). No Arduino App Lab or Docker needed. |
+| Base system | BSP layers | Kernel, firmware, bootloader, Wi-Fi and A/B boot marking from Qualcomm's `meta-qcom-arduino`, unchanged. |
 
----
+Baseline: Yocto 6.0 "wrynose" (LTS), `MACHINE = "uno-q"`, every layer and source pinned to a commit ([manifests/revisions.lock](manifests/revisions.lock)).
 
-## Embedded LED matrix visualization
+## Build
 
-A dedicated **Python script** extracts relevant GNSS-SDR outputs and forwards them to the **STM32F0 microcontroller** on the Arduino UNO Q.
+On a Linux x86_64 host with Docker or Podman, about 120 GB of free disk and 16 GB of RAM:
 
-The microcontroller drives an **LED matrix display**, providing real-time visualization of receiver status and navigation parameters.
+```bash
+git clone https://github.com/kalmancito/GNSS-SDR-meets-Arduino-Q.git
+cd GNSS-SDR-meets-Arduino-Q
 
-Currently visualized information includes:
+scripts/bootstrap-host.sh --install   # checks the host, downloads kas-container
+scripts/build-base.sh                 # the pinned Qualcomm BSP alone (reference build)
+scripts/update-go-mods.sh             # once: pin the Go modules of arduino-router
+scripts/build-gnss-image.sh --debug   # the receiver image, password-less root for bring-up
+scripts/validate-image.sh             # checks on the build output
+```
 
-- Satellite signal strength indicators (C/N₀)  
-- Receiver activity and status  
-- PVT-related information  
+Details, caches and troubleshooting: [docs/setup-host.md](docs/setup-host.md), [docs/build.md](docs/build.md).
 
-**Figure 4 – LED matrix visualization of C/N₀**
+## Flash and run
 
-![LED matrix C/N0](images/led_matrix_cn0.jpg)
+Flashing **erases the board**, including the factory system and `/home/arduino`. Read [docs/flashing-and-recovery.md](docs/flashing-and-recovery.md) first; it also covers how to go back to the factory image.
 
-**Figure 5 – LED matrix visualization of PVT information**
+```bash
+scripts/capture-board-info.sh arduino@<board>   # BEFORE flashing: inventory + your .conf files
+scripts/flash-guarded.sh                        # dry run: shows what would be written
+```
 
-The LED matrix provides a compact, color-coded visualization of key PVT parameters:
+After the first boot: [docs/board-access.md](docs/board-access.md) (console, Wi-Fi, SSH, USB host mode), [docs/rf-frontends.md](docs/rf-frontends.md) (antenna and RTL-SDR), then open `http://<board>:8080`.
 
-- **Red:** A binary clock indicating the number of tracked satellites. The most significant bit is the leftmost LED.
-- **Purple:** A conventional PVT status indicator. It blinks when no solution is available, remains steadily lit at low intensity for a 2D fix, and steadily lit at higher intensity for a 3D fix.
-- **Yellow:** C/N₀ bar indicators for up to seven satellites.
-- **Green:** Position and velocity representation. Within this square, a dot moves in the corresponding direction of motion; its displacement increases or decreases proportionally with the platform’s speed.
+## Tests
 
-<img src="images/led_matrix_pvt.jpg" alt="LED matrix PVT" style="transform: rotate(-90deg); width: 300px;">
+```bash
+tests/test-recipe-metadata.sh    # pins, no network in build tasks, no host tuning, kas files
+tests/test-configs.sh            # receiver profiles vs. the pinned GNSS-SDR source
+python3 tests/test-pvt-output.py --self-test
+(cd apps/led-matrix/python && python3 -m unittest -v)
+(cd apps/web-monitor && npm ci && npm test)
+```
 
-A working video can be found in: https://youtu.be/a7ZrCYMQSxc
----
+These run anywhere and need no board. Build and hardware tests are listed in [docs/validation-report.md](docs/validation-report.md).
 
-## Status and limitations
+## Repository layout
 
-- GPS L1 C/A only  
-- 7 tracking channels  
-- Real-time operation validated  
-- Galileo, OSNMA and multi-constellation support: **not yet enabled**  
-- Quantitative performance metrics (DOP, accuracy):  
+| Path | Contents |
+|---|---|
+| [kas/](kas) | Build manifests: `uno-q-upstream.yml` (pinned BSP), `uno-q-gnss-sdr.yml` (product) |
+| [meta-gnss-uno-q/](meta-gnss-uno-q) | The product layer: distro, image, recipes, systemd units, receiver profiles |
+| [apps/web-monitor/](apps/web-monitor) | Node.js web monitor (server, UI, tests) |
+| [apps/led-matrix/](apps/led-matrix) | LED matrix: Python bridge, STM32 sketch, Arduino App Lab app |
+| [scripts/](scripts) | Host check, builds, image validation, board inventory and diagnosis, benchmark, guarded flashing |
+| [tests/](tests) | Static checks and the PVT output checker |
+| [docs/](docs) | Research, decisions (ADRs), guides, validation report, known issues |
+| [manifests/](manifests) | Pinned revisions and the build manifest |
+| `local/` | Your SSH key and Wi-Fi profile for the image; never committed ([local/README.md](local/README.md)) |
 
----
+## Scope
 
-## Future work
+In: GPS L1 C/A, one band, one antenna; recorded I/Q files and RTL-SDR.
 
-Planned extensions include:
-
-- Performance characterization (C/N₀ statistics, DOP, positioning accuracy)  
-- CPU and memory optimization  
-- Exploration of multi-constellation support  
-- Enhanced web-based monitoring and visualization  
-- Extended LED matrix display modes  
-
----
+Not yet: Galileo and multi-constellation, dual frequency, OSNMA. They are limited by what the Cortex-A53 can process in real time and come after the benchmarks of [docs/validation-report.md](docs/validation-report.md) exist.
 
 ## License
 
-This work is released under the **GNU General Public License v2.0 (GPL-2.0)**.
-
-The GPL license ensures practical usability, inspection, and continuous improvement by the research community, allowing discussion based on tangible code and the analysis of results obtained with real signals.
-
-In summary:
-
-- Copies may be distributed free of charge or commercially, provided the corresponding source code is made available under GPL-2.0.
-- The licensed material may be studied and modified.
-- Modified versions must remain under GPL-2.0 **if distributed**; there is no obligation to distribute modifications.
-- GNSS-SDR–based software cannot be redistributed under proprietary or non-disclosure licenses.
-- Hardware devices running this software may be sold; if the software is distributed, it must remain GPL-licensed.
-
-See the `LICENSE` file for the full license text.
+The contents of this repository are released under the **GNU General Public License v2.0** ([LICENSE](LICENSE)), except where a file states otherwise. The image built from it combines components under several licences, GNSS-SDR and GNU Radio under GPL-3.0 among them; [LICENSES.md](LICENSES.md) lists them and what distributing a built image requires.
