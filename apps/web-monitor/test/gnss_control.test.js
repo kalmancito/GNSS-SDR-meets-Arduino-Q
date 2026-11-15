@@ -91,8 +91,11 @@ test("spawn: the receiver exiting on its own clears the state", async () => {
   const shortLived = (cmd, args, opts) => childProcess.spawn(process.execPath, ["-e", "process.exit(3)"], opts);
   const ctl = createSpawnController(makeCfg(), { spawn: shortLived, log: quiet });
   await ctl.start("gps-l1ca-file");
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  const st = await ctl.status();
+  let st = await ctl.status();
+  for (let i = 0; i < 100 && st.running; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    st = await ctl.status();
+  }
   assert.equal(st.running, false);
   assert.match(st.message, /exit code 3/);
 });
