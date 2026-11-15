@@ -141,6 +141,41 @@ else
     pend "arduino-router-go-mods.inc not generated yet: arduino-router cannot be built offline until scripts/update-go-mods.sh has been run on the build host and its output committed"
 fi
 
+# ---- meta-sdr recipes that wrynose cannot parse ---------------------------------------------------------------------
+# wrynose's BitBake rejects SPDX operators (AND/OR/WITH) in LICENSE. meta-sdr's
+# master uses them in its GNU Radio 4 recipes, which conf/layer.conf masks out.
+# When a checkout of meta-sdr is available (kas puts it next to the repository,
+# or in KAS_WORK_DIR), make sure every such recipe is still masked.
+sdr_dir=""
+for d in "${KAS_WORK_DIR:-}/meta-sdr" "$repo/meta-sdr"; do
+    [ -d "$d/.git" ] && { sdr_dir="$d"; break; }
+done
+if [ -z "$sdr_dir" ]; then
+    pend "no meta-sdr checkout here (it appears after the first kas run): SPDX LICENSE recipes not checked against BBMASK"
+else
+    unmasked="$("$python_bin" - "$sdr_dir" "$layer/conf/layer.conf" << 'EOF'
+import re, sys
+from pathlib import Path
+sdr, conf = Path(sys.argv[1]), Path(sys.argv[2]).read_text(encoding="utf-8")
+masks = []
+for m in re.finditer(r'^BBMASK\s*\+?=\s*"([^"]*)"', conf, re.M | re.S):
+    masks += m.group(1).replace("\\\n", " ").split()
+bad = re.compile(r'^LICENSE\s*[?:]?=\s*".*\b(AND|OR|WITH)\b', re.M)
+for f in sorted(list(sdr.rglob("*.bb")) + list(sdr.rglob("*.inc"))):
+    if bad.search(f.read_text(encoding="utf-8", errors="replace")):
+        path = "/meta-sdr/" + f.relative_to(sdr).as_posix()
+        if not any(re.search(mk, path) for mk in masks):
+            print(path)
+EOF
+)"
+    if [ -z "$unmasked" ]; then
+        pass "every meta-sdr recipe with an SPDX LICENSE expression is masked ($(git -C "$sdr_dir" rev-parse --short HEAD))"
+    else
+        fail "meta-sdr recipes that wrynose cannot parse and that are not in BBMASK:"
+        echo "$unmasked" | sed 's/^/             /'
+    fi
+fi
+
 # ---- kas manifests ------------------------------------------------------------------------------------------------
 echo "kas manifests"
 "$python_bin" - "$repo" << 'EOF'
