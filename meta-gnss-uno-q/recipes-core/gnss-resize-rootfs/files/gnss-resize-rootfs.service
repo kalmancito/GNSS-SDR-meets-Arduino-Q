@@ -1,0 +1,15 @@
+[Unit]
+Description=Grow the root filesystem to the size of its partition
+# The BSP mounts the root filesystem by partition label (root=PARTLABEL=rootfs).
+ConditionPathExists=/dev/disk/by-partlabel/rootfs
+After=systemd-remount-fs.service
+Before=gnss-sdr.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Online resize of the mounted ext4 filesystem; does nothing if already grown.
+ExecStart=/sbin/resize2fs /dev/disk/by-partlabel/rootfs
+
+[Install]
+WantedBy=multi-user.target
