@@ -14,6 +14,8 @@
 #   * --recovery-image FILE: the factory image, already downloaded, as proof
 #     that there is a way back (docs/flashing-and-recovery.md),
 #   * --inventory DIR: the output of scripts/capture-board-info.sh,
+#   * --backup DIR: the output of scripts/backup-board-partitions.sh
+#     (calibration, modem/Wi-Fi file system, MAC addresses), verified,
 #   * typing the confirmation phrase.
 #
 # Entering EDL needs a jumper on the JCTL header (GND - USB_BOOT) fitted BEFORE
@@ -30,6 +32,7 @@ flashdir=""
 execute=0
 recovery=""
 inventory=""
+backup=""
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --flashdir) flashdir="${2:?}"; shift ;;
@@ -37,6 +40,7 @@ while [ "$#" -gt 0 ]; do
         --execute) execute=1 ;;
         --recovery-image) recovery="${2:?}"; shift ;;
         --inventory) inventory="${2:?}"; shift ;;
+        --backup) backup="${2:?}"; shift ;;
         -h | --help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) die "unknown option $1 (see --help)" ;;
     esac
@@ -84,6 +88,51 @@ print("    %d partitions written; the GPT is replaced (patch0.xml)." % len(rows)
 sys.exit(1 if missing else 0)
 EOF
 
+# ---- 3. what happens to the board's own partitions ------------------------------------
+# The Yocto layout is not the factory one. Device-specific partitions that the
+# image does not write (calibration, the modem/Wi-Fi DSP file system served by
+# rmtfs) end up at different offsets: after the flash they hold whatever was
+# there before, and their factory content is no longer where anything looks.
+factory_offsets=""
+for f in "$backup/partition-offsets.txt" "$inventory/partition-offsets.txt"; do
+    [ -n "${f%/partition-offsets.txt}" ] && [ -f "$f" ] && { factory_offsets="$f"; break; }
+done
+if [ -n "$factory_offsets" ]; then
+    info "Device-specific partitions, factory offset vs this image (sectors):"
+    python3 - "$flashdir/rawprogram0.xml" "$factory_offsets" << 'EOF'
+import sys, xml.etree.ElementTree as ET
+new = {}
+for prog in ET.parse(sys.argv[1]).getroot().iter("program"):
+    if prog.get("physical_partition_number", "0") == "0" and prog.get("label"):
+        new.setdefault(prog.get("label"), (int(prog.get("start_sector", "-1")), int(prog.get("num_partition_sectors", "0")), prog.get("filename") or ""))
+fac = {}
+for line in open(sys.argv[2], encoding="utf-8"):
+    parts = line.split()
+    if len(parts) == 4 and parts[0].startswith("mmcblk0p") and parts[2].isdigit():
+        fac[parts[1]] = (int(parts[2]), int(parts[3]))
+moved = 0
+print("    %-14s %12s %12s  %s" % ("PARTITION", "FACTORY", "THIS IMAGE", "RESULT"))
+for name in ("persist", "modemst1", "modemst2", "fsg", "fsc", "devinfo", "keystore", "frp"):
+    f, n = fac.get(name), new.get(name)
+    if not f or not n:
+        print("    %-14s %12s %12s  %s" % (name, f[0] if f else "-", n[0] if n else "-", "only in one layout"))
+        continue
+    if n[2]:
+        result = "WRITTEN by the image"
+    elif f[0] == n[0] and f[1] == n[1]:
+        result = "same place, kept"
+    else:
+        result = "MOVED: factory content lost here"
+        moved += 1
+    print("    %-14s %12d %12d  %s" % (name, f[0], n[0], result))
+if moved:
+    print("    %d partition(s) move. Restore them from the backup after the first boot if Wi-Fi/modem misbehave:" % moved)
+    print("    docs/flashing-and-recovery.md, 'Calibration and identity partitions'.")
+EOF
+else
+    warn "Factory partition offsets unknown (pass --inventory or --backup): cannot show which device-specific partitions move."
+fi
+
 cmd=(qdl --storage emmc --debug prog_firehose_ddr.elf rawprogram0.xml patch0.xml)
 info "Command (run inside the flash directory):"
 echo "    ${cmd[*]}"
@@ -93,11 +142,11 @@ if [ "$execute" -ne 1 ]; then
     echo
     info "Dry run: nothing was written and the device was not contacted."
     echo "    To flash: fit the EDL jumper, connect the board, then re-run with"
-    echo "    --execute --recovery-image FILE --inventory DIR"
+    echo "    --execute --recovery-image FILE --inventory DIR --backup DIR"
     exit 0
 fi
 
-# ---- 3. preconditions for a real write --------------------------------------------------
+# ---- 4. preconditions for a real write --------------------------------------------------
 require_linux
 need qdl "Build it from https://github.com/linux-msm/qdl (v2.x) or install your distribution's package."
 need lsusb "Install usbutils."
@@ -108,6 +157,13 @@ need lsusb "Install usbutils."
     || die "--inventory DIR is required: run scripts/capture-board-info.sh against the factory system first."
 info "Recovery image: $recovery ($(du -h "$recovery" | cut -f1))"
 info "Inventory     : $inventory"
+
+[ -n "$backup" ] && [ -f "$backup/SHA256SUMS" ]     || die "--backup DIR is required: run scripts/backup-board-partitions.sh against the factory system first (calibration, modem file system, MAC addresses)."
+(cd "$backup" && sha256sum -c --quiet SHA256SUMS) || die "the backup in $backup does not match its checksums."
+for f in persist modemst1 modemst2 fsg fsc mmcblk0boot0 mmcblk0boot1; do
+    [ -s "$backup/$f.img" ] || die "$backup/$f.img is missing: the partition backup is incomplete."
+done
+info "Backup        : $backup (verified)"
 
 if systemctl is-active --quiet ModemManager 2> /dev/null; then
     die "ModemManager is running and will grab the EDL serial port. Stop it first: sudo systemctl stop ModemManager"
