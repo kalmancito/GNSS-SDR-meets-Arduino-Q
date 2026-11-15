@@ -12,7 +12,7 @@ Items that could not be verified are in [the last section](#not-verified).
 | | `wrynose` | `2760e59c` | |
 | | tag `qli-2.1.1-arduino-rc1` (2026-11-12) | `583c6e4b` | |
 | [qualcomm-linux/meta-qcom](https://github.com/qualcomm-linux/meta-qcom) | `wrynose` | `207b4983` (head), `a6c92fad` (pinned by the tag above) | MIT |
-| [qualcomm-linux/meta-qcom-distro](https://github.com/qualcomm-linux/meta-qcom-distro) | `wrynose` | `bcb485ea` | - |
+| [qualcomm-linux/meta-qcom-distro](https://github.com/qualcomm-linux/meta-qcom-distro) | `wrynose` | `bcb485ea` | MIT |
 | [openembedded-core](https://github.com/openembedded/openembedded-core) | `wrynose` / `master` | `33a6bd6c` / `f32bced7` | MIT / GPL-2.0 |
 | [meta-openembedded](https://github.com/openembedded/meta-openembedded) | `wrynose` | `c0fcd7cc` (head), `c734c2cb` (pinned) | MIT |
 
@@ -38,7 +38,7 @@ Decisions: [ADR-001](decisions/ADR-001-yocto-release.md) (wrynose, pinned to the
 | | `next` | `a3ad179b` | |
 | [carlesfernandez/meta-gnss-sdr](https://github.com/carlesfernandez/meta-gnss-sdr) | `whinlatter` (newest release branch) | `f8528308` | MIT |
 | | `master` | `8cff1071` | |
-| [balister/meta-sdr](https://github.com/balister/meta-sdr) | `master` (2026-11-14) | `69285532` | MIT |
+| [balister/meta-sdr](https://github.com/balister/meta-sdr) | `master` (2026-11-14) | `69285532` | no licence file at the top level (not verified) |
 
 Findings about `meta-gnss-sdr`:
 
@@ -76,7 +76,7 @@ Decisions: [ADR-002](decisions/ADR-002-gnss-sdr-recipe.md) (own recipe), [ADR-00
 | [arduino/arduino-router-bridge-py](https://github.com/arduino/arduino-router-bridge-py) | tag `v0.5.2` | `433e3032` | MPL-2.0 |
 | [arduino/ArduinoCore-zephyr](https://github.com/arduino/ArduinoCore-zephyr) | tag `1.1.0` | `f07865dd` | Apache-2.0 |
 | [arduino-libraries/Arduino_RouterBridge](https://github.com/arduino-libraries/Arduino_RouterBridge) | 0.4.4 | `dc170bd5` | MPL-2.0 |
-| [arduino/meta-arduino](https://github.com/arduino/meta-arduino) | `wrynose` | `6cc3e503` | see repository |
+| [arduino/meta-arduino](https://github.com/arduino/meta-arduino) | `wrynose` | `6cc3e503` | MIT |
 
 Findings:
 
