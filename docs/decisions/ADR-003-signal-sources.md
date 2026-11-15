@@ -22,11 +22,11 @@ So the default build has no dependency on any SDR driver stack, and the file-onl
 
 ## Cost of the `rtl_tcp` path
 
-At 1.2 MS/s the stream is 2.4 MB/s of 8-bit samples over loopback, plus one extra process. Whether that matters on the Cortex-A53 is a measurement, not an assumption: test P01. If it does, enable `osmosdr` and compare.
+At 2.048 MS/s the stream is 4.1 MB/s of 8-bit samples over loopback, plus one extra process. Whether that matters on the Cortex-A53 is a measurement, not an assumption: test P01. If it does, enable `osmosdr` and compare.
 
 ## Consequences
 
-- The original demo's live configuration may use the osmosdr source; its tuning (gain, 7 channels, 4 ms integration) carries over, the source block does not. `gps-l1ca-live.conf` currently holds upstream's example values and is to be updated from the configuration recovered from the board.
+- The original demo's live configuration, recovered from the board, **does use `Osmosdr_Signal_Source`** (gr_complex at 2.048 MS/s). Its tuning carries over to `gps-l1ca-live.conf`: same rate, 7 channels, 4 ms integration, narrow loops. The source block does not. So the first live test also compares the two paths. If `rtl_tcp` costs too much CPU at 2.048 MS/s, build with `osmosdr` and use the demo's source.
 - `rtl_tcp` serves one client; `gnss-sdr-preflight` probes the port once and waits before the receiver connects.
 - Bias tee and device selection are `rtl_tcp` arguments (`RTL_TCP_EXTRA_ARGS` in `/etc/default/gnss-sdr`); frequency, rate and gain are set by GNSS-SDR from the profile.
 

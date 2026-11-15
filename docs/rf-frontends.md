@@ -23,7 +23,7 @@ The demo used a **Nooelec NESDR SMArTee**: its bias tee is always on and it has 
 
 ### Oscillator
 
-A plain RTL-SDR crystal can be off by 50 ppm or more: about 80 kHz at L1, far outside the receiver's Doppler search, and drifting as the dongle warms up. With a TCXO (1 ppm or better, 1.5 kHz) the search of +/-10 kHz in the profile covers it. Without one, expect to calibrate: GNSS-SDR's `front-end-cal` tool estimates the offset, which then goes into `InputFilter.IF` and the sample rate of the profile. `front-end-cal` is not built in this image (it needs the osmosdr source).
+A plain RTL-SDR crystal can be off by 50 ppm or more: about 80 kHz at L1, far outside the receiver's Doppler search, and drifting as the dongle warms up. With a TCXO (1 ppm or better, 1.5 kHz) the profile's Doppler search of +/-5 kHz covers it. Without one, expect to calibrate: GNSS-SDR's `front-end-cal` tool estimates the offset, which then goes into `InputFilter.IF` and the sample rate of the profile. `front-end-cal` is not built in this image (it needs the osmosdr source).
 
 ## The live profile
 
@@ -32,13 +32,16 @@ A plain RTL-SDR crystal can be off by 50 ppm or more: about 80 kHz at L1, far ou
 | Setting | Value | Notes |
 |---|---|---|
 | `SignalSource.freq` | 1575420000 | L1 |
-| `SignalSource.sampling_frequency` | 1200000 | upstream example value; narrower than the C/A main lobe (2.046 MHz) but light on the CPU |
+| `SignalSource.sampling_frequency` | 2048000 | covers the C/A main lobe (2.046 MHz) |
 | `SignalSource.gain` / `rf_gain` / `if_gain` | 40 / 40 / 30 | tuner gain; start high, reduce if the signal is clipped |
 | `SignalSource.AGC_enabled` | false | fixed gain is more predictable for GNSS |
-| `InputFilter.IF` | 0 | set to the calibrated offset if the dongle has no TCXO |
+| `InputFilter` | `Pass_Through` | no filtering, no frequency shift: needs a dongle with a TCXO |
 | `Channels_1C.count` | 7 | what ran in real time in the demo |
+| Integration | 4 ms, narrow loops after lock | weak-signal margin |
 
-These are upstream's example values plus the demo's channel count. The demo's own tuning (gains, 4 ms integration) is in `all_bands_rtl_realtime.conf` on the board: once recovered with `scripts/capture-board-info.sh`, carry its values over.
+These are the values of the demo's validated configuration (`all_bands_rtl_realtime.conf`, recovered from the board on 2026-11-15 into [docs/logs/board-inventory-20261115](logs/board-inventory-20261115/gnss-sdr-conf/)). Only the source block differs: `rtl_tcp` instead of gr-osmosdr.
+
+For a dongle **without** a TCXO, replace `InputFilter` with the `Freq_Xlating_Fir_Filter` block of upstream's `gnss-sdr_GPS_L1_rtl_tcp_realtime.conf` and put the calibrated offset in `InputFilter.IF`.
 
 ## Checking the chain, step by step
 
@@ -54,7 +57,7 @@ lsmod | grep dvb_usb_rtl28xxu               # must print nothing
 
 # 3. Does it stream without losing samples? (stop rtl-tcp first: one user at a time)
 systemctl stop rtl-tcp gnss-sdr
-rtl_test -s 1200000                         # run a minute; "lost at least N bytes" = USB problem
+rtl_test -s 2048000                         # run a minute; "lost at least N bytes" = USB problem
 rtl_test -p                                 # reports the oscillator error in ppm after a few minutes
 systemctl start rtl-tcp
 

@@ -4,19 +4,22 @@ Status: starting point, **to be replaced by measurements** (test P01). Date: 202
 
 ## Context
 
-The QRB2210 has four Cortex-A53 cores and the board 2 GB (or 4 GB) of RAM and 16 (or 32) GB of eMMC. The design assumes the small variant. The only measured fact so far is from the original demo on the factory system: GPS L1 C/A, **7 channels, real time, with an RTL-SDR**. Nothing has been measured on the Yocto image.
+The QRB2210 has four Cortex-A53 cores and the board 2 GB (or 4 GB) of RAM and 16 (or 32) GB of eMMC. **The board of this project is the small variant** (inventory of 2026-11-15: 1.74 GB usable RAM, 14.6 GB eMMC). The only measured fact so far is from the original demo on the factory system: GPS L1 C/A, **7 channels, real time, with an RTL-SDR at 2.048 MS/s through gr-osmosdr**. Nothing has been measured on the Yocto image.
+
+The demo's `volk_gnsssdr_profile` result is in the inventory: NEON kernels were chosen for the resamplers, rotators and dot products. The image does the same once `gnss-benchmark --profile` has run.
 
 ## Starting values
 
 | Parameter | File profile | Live profile | Why |
 |---|---|---|---|
-| Sample rate into the receiver | 4 MS/s, resampled to 2 MS/s | 1.2 MS/s | upstream's examples for these two inputs |
+| Sample rate into the receiver | 4 MS/s, resampled to 2 MS/s | 2.048 MS/s, no resampling | upstream example / the demo's validated configuration |
 | Sample type | 16-bit I/Q | 8-bit I/Q from `rtl_tcp` | the format of each source |
 | Channels | 8 | 7 | upstream example / what ran in real time on this board |
 | Channels acquiring at once | 1 | 1 | acquisition is the most expensive block |
-| Tracking | 1 ms integration, PLL 40 Hz, DLL 4 / 2 Hz | same | upstream examples. The demo used 4 ms; its values are to be taken from the recovered configuration, not guessed. |
-| PVT rate | 10 Hz output, 2 Hz on screen | same | upstream example |
-| Monitor to the web UI | every 10th observable epoch (5 Hz) | same | the UI needs no more; saves decoding work |
+| Acquisition | 1 ms coherent, Doppler +/-10 kHz in 250 Hz steps | 4 ms coherent, +/-5 kHz in 500 Hz steps, Pfa 1e-4 | upstream example / demo |
+| Tracking | 1 ms integration, PLL 40 Hz, DLL 4 Hz | 35 / 1.5 Hz, then 4 ms integration with 2.5 / 0.5 Hz loops | upstream example / demo |
+| PVT rate | 10 Hz output, 2 Hz on screen | same | upstream example; the demo printed at 10 Hz |
+| Monitor to the web UI | every 10th observable epoch | every 50th | the UI needs no more / demo |
 
 ## Compiler and vector code
 
