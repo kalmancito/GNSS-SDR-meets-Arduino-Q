@@ -1,0 +1,10 @@
+# Shell scripts, recipes and configuration are consumed on Linux (BitBake, the
+# build host, the board): keep LF line endings in every working copy, including
+# Windows ones. A CRLF in a script or a recipe breaks it.
+* text=auto eol=lf
+
+*.png  binary
+*.jpg  binary
+*.jfif binary
+*.pdf  binary
+*.docx binary
