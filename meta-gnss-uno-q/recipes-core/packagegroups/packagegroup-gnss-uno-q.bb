@@ -45,6 +45,7 @@ RDEPENDS:${PN}-system = " \
     curl \
     e2fsprogs-resize2fs \
     gnss-resize-rootfs \
+    gnss-tools \
     htop \
     iproute2 \
     less \
@@ -52,8 +53,10 @@ RDEPENDS:${PN}-system = " \
     nano \
     networkmanager \
     networkmanager-nmcli \
+    networkmanager-wifi \
     procps \
     tzdata \
     usbutils \
     util-linux \
+    wpa-supplicant \
 "
